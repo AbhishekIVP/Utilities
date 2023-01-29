@@ -1,3 +1,4 @@
+using ivp.edm.apm;
 using ivp.edm.secrets;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<SecretsManager>();
+
+builder.Host.AddMonitoring();
+builder.Host.AddLogging();
 
 var app = builder.Build();
 
@@ -28,5 +32,6 @@ app.MapGet("/", () =>
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseOpenTelemetry();
 
 app.Run();
