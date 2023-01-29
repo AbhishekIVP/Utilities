@@ -71,15 +71,18 @@ public static class DistributedLockingExtensions
     //     return services;
     // }
 
-    public static IHostBuilder AddDynamicRedisLocking(this IHostBuilder builder)
+    public static IHostBuilder AddDynamicRedisLocking(this IHostBuilder builder, Action<IConnectionMultiplexer>? connectionMultiplexer = null)
     {
         return builder.ConfigureServices((context, collection) =>
         {
-            collection.AddDynamicRedisLocking(context.Configuration, context.HostingEnvironment);
+            collection.AddDynamicRedisLocking(context.Configuration, context.HostingEnvironment, connectionMultiplexer);
         });
     }
 
-    public static IServiceCollection AddDynamicRedisLocking(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    public static IServiceCollection AddDynamicRedisLocking(this IServiceCollection services
+            , IConfiguration configuration
+            , IHostEnvironment environment
+            , Action<IConnectionMultiplexer>? connectionMultiplexer = null)
     {
         ConfigurationOptions _options = new ConfigurationOptions();
 
@@ -104,6 +107,7 @@ public static class DistributedLockingExtensions
             else
                 throw new NotImplementedException($"Secrets Service {_secretsServiceType} type is not implemented.");
         }
+
         _options.DefaultDatabase = Convert.ToInt32(configuration["DistributedLocking:Redis:Database"]);
 
         if (string.IsNullOrEmpty(configuration["DistributedLocking:Redis:Endpoint"]))
@@ -113,6 +117,8 @@ public static class DistributedLockingExtensions
         var connection = ConnectionMultiplexer.Connect(_options); // uses StackExchange.Redis
 
         services.AddSingleton<IDistributedLockProvider>(_ => new RedisDistributedSynchronizationProvider(connection.GetDatabase()));
+
+        connectionMultiplexer?.Invoke(connection);
 
         return services;
     }

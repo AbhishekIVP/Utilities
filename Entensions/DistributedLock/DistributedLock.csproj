@@ -8,7 +8,6 @@
 
    <ItemGroup>
     <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
-    <PackageReference Include="IndusValleyPartners.OpenTelemetry.Extensions" Version="1.0.2-alpha" />
   </ItemGroup>
 
   <ItemGroup>

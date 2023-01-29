@@ -12,20 +12,30 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
+using StackExchange.Redis;
 
 namespace ivp.edm.apm
 {
     public static class MonitoringServiceCollectionExtensions
     {
-        public static IHostBuilder AddMonitoring(this IHostBuilder builder)
+        public static IHostBuilder AddMonitoring(this IHostBuilder builder, IConnectionMultiplexer? redisConnection = null)
         {
             return builder.ConfigureServices((context, collection) =>
             {
-                collection.AddMonitoring(context.Configuration, context.HostingEnvironment);
+                if (redisConnection == null)
+                {
+                    var _serviceProvider = collection.BuildServiceProvider();
+                    redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
+                }
+                collection.AddMonitoring(context.Configuration, context.HostingEnvironment, redisConnection);
             });
         }
 
-        public static IServiceCollection AddMonitoring(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+        public static IServiceCollection AddMonitoring(this IServiceCollection services
+            , IConfiguration configuration
+            , IHostEnvironment environment
+            , IConnectionMultiplexer? redisConnection = null
+            )
         {
             var serviceName = configuration["OpenTelemetry:Service:Name"]?.ToString() ?? environment.ApplicationName;
             var serviceVersion = configuration["OpenTelemetry:Service:Version"]?.ToString() ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
@@ -62,15 +72,43 @@ namespace ivp.edm.apm
                             tracerProviderBuilder
                                 .AddSource(serviceName)
                                 .SetResourceBuilder(appResourceBuilder)
-                                .AddHttpClientInstrumentation()
-                                .AddAspNetCoreInstrumentation()
-                                .AddSqlClientInstrumentation()
-                                .AddMySqlDataInstrumentation()
+                                .AddHttpClientInstrumentation(_ =>
+                                {
+                                    //TODO: Use Options Pattern
+                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Http:RecordException"]);
+                                })
+                                .AddAspNetCoreInstrumentation(_ =>
+                                {
+                                    //TODO: Use Options Pattern
+                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:AspNetCore:RecordException"]);
+                                    _.EnableGrpcAspNetCoreSupport = Convert.ToBoolean(configuration["OpenTelemetry:Traces:AspNetCore:EnableGrpcAspNetCoreSupport"]);
+                                })
+                                .AddSqlClientInstrumentation(_ =>
+                                {
+                                    //TODO: Use Options Pattern
+                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:RecordException"]);
+                                    _.SetDbStatementForStoredProcedure = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureStoreProcCall"]);
+                                    _.SetDbStatementForText = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureQueryText"]);
+                                })
+                                .AddMySqlDataInstrumentation(_ =>
+                                {
+                                    //TODO: Use Options Pattern
+                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:RecordException"]);
+                                    _.SetDbStatement = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureQueryText"]);
+                                })
+                                .AddEntityFrameworkCoreInstrumentation(_ =>
+                                {
+                                    //TODO: Use Options Pattern
+                                    _.SetDbStatementForStoredProcedure = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureStoreProcCall"]);
+                                    _.SetDbStatementForText = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureQueryText"]);
+                                })
                                 .AddOtlpExporter(opts =>
                                 {
                                     opts.Endpoint = new Uri(otlpEndpoint);
                                 })
                                 ;
+                            if (redisConnection != null)
+                                tracerProviderBuilder.AddRedisInstrumentation(redisConnection);
                             if (environment.IsProduction())
                                 tracerProviderBuilder.SetSampler<TraceIdRatioBasedSampler>();
                             else
@@ -101,7 +139,7 @@ namespace ivp.edm.apm
                                 //     );
                                 // })
                                 ;
-                                
+
                             if (_metricsMode == MetricsMode.Otel)
                                 metricProviderBuilder.AddOtlpExporter(opts =>
                                     {

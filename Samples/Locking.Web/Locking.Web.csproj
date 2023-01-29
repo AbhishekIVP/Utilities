@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Entensions\DistributedLock\DistributedLock.csproj" />
+    <ProjectReference Include="..\..\Entensions\OpenTelemetry\OpenTelemetry.Apm.csproj" />
   </ItemGroup>
 
 </Project>
