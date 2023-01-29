@@ -1,4 +1,4 @@
-﻿using Dapr.Secrets;
+﻿using ivp.edm.secrets;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.Extensions.Configuration;
