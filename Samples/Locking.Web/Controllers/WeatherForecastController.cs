@@ -15,21 +15,16 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly IDistributedLockProvider _lockProvider;
-    private readonly IHttpClientFactory _httpFactory;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IDistributedLockProvider lockProvider, IHttpClientFactory httpFactory)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IDistributedLockProvider lockProvider)
     {
         _logger = logger;
         _lockProvider = lockProvider;
-        _httpFactory = httpFactory;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
     public async IAsyncEnumerable<WeatherForecast> Get()
     {
-        var _httpClient = _httpFactory.CreateClient("secrets");
-        _logger.LogDebug(await _httpClient.GetStringAsync($"secret/redisPassword"));
-
         _logger.LogDebug($"{Activity.Current?.TraceId} is trying to acquire the lock.");
         await using (await this._lockProvider.AcquireLockAsync("Weather"))
         {
