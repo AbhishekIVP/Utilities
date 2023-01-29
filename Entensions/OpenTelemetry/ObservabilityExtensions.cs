@@ -24,8 +24,8 @@ namespace ivp.edm.apm
             {
                 if (redisConnection == null)
                 {
-                    var _serviceProvider = collection.BuildServiceProvider();
-                    redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
+                    using (var _serviceProvider = collection.BuildServiceProvider())
+                        redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
                 }
                 collection.AddMonitoring(context.Configuration, context.HostingEnvironment, redisConnection);
             });
