@@ -1,28 +1,20 @@
 using Dapr.Client;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace ivp.edm.secrets;
 
 public class SecretsManager
 {
     private readonly IConfiguration _configuration;
-    private readonly IHostEnvironment _environment;
     private readonly DaprClient _daprClient;
-    public SecretsManager(IConfiguration configuration, IHostEnvironment environment)
+    public SecretsManager(IConfiguration configuration)
     {
         _configuration = configuration;
-        _environment = environment;
         _daprClient = Register();
     }
     private DaprClient Register()
     {
-        var clientBuilder = new DaprClientBuilder();
-
-        if (_environment.IsDevelopment())
-            clientBuilder.UseGrpcEndpoint($"http://127.0.0.1:{_configuration["Dapr:SideCarPort"] ?? "50001"}");
-
-        return clientBuilder.Build();
+        return new DaprClientBuilder().Build();
     }
 
     public async Task<string> GetDefaultStoreSecretAsync(string secretName)

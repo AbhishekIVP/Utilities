@@ -1,0 +1,521 @@
+{
+    "definitions": {
+        "edm": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Logging": {
+                    "$ref": "#/definitions/Logging"
+                },
+                "DistributedLocking": {
+                    "$ref": "#/definitions/DistributedLocking"
+                },
+                "SecretsService": {
+                    "$ref": "#/definitions/SecretsService"
+                },
+                "Dapr": {
+                    "$ref": "#/definitions/Dapr"
+                },
+                "OpenTelemetry": {
+                    "$ref": "#/definitions/OpenTelemetry"
+                },
+                "Serilog": {
+                    "$ref": "#/definitions/Serilog"
+                }
+            },
+            "required": [
+                "Dapr",
+                "DistributedLocking",
+                "Logging",
+                "OpenTelemetry",
+                "SecretsService",
+                "Serilog"
+            ],
+            "title": "edm"
+        },
+        "Dapr": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "DefaultSecretStore": {
+                    "type": "string"
+                },
+                "SideCarPort": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "DefaultSecretStore",
+                "SideCarPort"
+            ],
+            "title": "Dapr"
+        },
+        "DistributedLocking": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Redis": {
+                    "$ref": "#/definitions/Redis"
+                }
+            },
+            "required": [
+                "Redis"
+            ],
+            "title": "DistributedLocking"
+        },
+        "Redis": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Endpoint": {
+                    "type": "string"
+                },
+                "Password": {
+                    "$ref": "#/definitions/Password"
+                },
+                "Database": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "Database",
+                "Endpoint",
+                "Password"
+            ],
+            "title": "Redis"
+        },
+        "Password": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Value": {
+                    "type": "string"
+                },
+                "ValueFrom": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Value",
+                "ValueFrom"
+            ],
+            "title": "Password"
+        },
+        "Logging": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "LogLevel": {
+                    "$ref": "#/definitions/LogLevel"
+                }
+            },
+            "required": [
+                "LogLevel"
+            ],
+            "title": "Logging"
+        },
+        "LogLevel": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Default": {
+                    "type": "string"
+                },
+                "Microsoft.AspNetCore": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Default",
+                "Microsoft.AspNetCore"
+            ],
+            "title": "LogLevel"
+        },
+        "OpenTelemetry": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Endpoint": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "http"
+                    ]
+                },
+                "Logging": {
+                    "$ref": "#/definitions/OpenTelemetryLogging"
+                },
+                "Service": {
+                    "$ref": "#/definitions/Service"
+                },
+                "Metrics": {
+                    "$ref": "#/definitions/Metrics"
+                },
+                "Traces": {
+                    "$ref": "#/definitions/Traces"
+                }
+            },
+            "required": [
+                "Endpoint",
+                "Logging",
+                "Metrics",
+                "Service",
+                "Traces"
+            ],
+            "title": "OpenTelemetry"
+        },
+        "OpenTelemetryLogging": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Mode": {
+                    "type": "string"
+                },
+                "OtelSerilog": {
+                    "$ref": "#/definitions/OtelSerilog"
+                }
+            },
+            "required": [
+                "Mode",
+                "OtelSerilog"
+            ],
+            "title": "OpenTelemetryLogging"
+        },
+        "OtelSerilog": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Path": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Path"
+            ],
+            "title": "OtelSerilog"
+        },
+        "Metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Mode": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Mode"
+            ],
+            "title": "Metrics"
+        },
+        "Service": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Name",
+                "Version"
+            ],
+            "title": "Service"
+        },
+        "Traces": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Mode": {
+                    "type": "string"
+                },
+                "Sql": {
+                    "$ref": "#/definitions/SQL"
+                },
+                "MySql": {
+                    "$ref": "#/definitions/MySQL"
+                },
+                "EFCore": {
+                    "$ref": "#/definitions/EFCore"
+                },
+                "Http": {
+                    "$ref": "#/definitions/HTTP"
+                },
+                "Grpc": {
+                    "$ref": "#/definitions/Grpc"
+                },
+                "AspNetCore": {
+                    "$ref": "#/definitions/ASPNetCore"
+                }
+            },
+            "required": [
+                "AspNetCore",
+                "EFCore",
+                "Grpc",
+                "Http",
+                "Mode",
+                "MySql",
+                "Sql"
+            ],
+            "title": "Traces"
+        },
+        "ASPNetCore": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "EnableGrpcAspNetCoreSupport": {
+                    "type": "boolean"
+                },
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "EnableGrpcAspNetCoreSupport",
+                "RecordException"
+            ],
+            "title": "ASPNetCore"
+        },
+        "EFCore": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SetDbStatementForStoredProcedure": {
+                    "type": "boolean"
+                },
+                "SetDbStatementForText": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "SetDbStatementForStoredProcedure",
+                "SetDbStatementForText"
+            ],
+            "title": "EFCore"
+        },
+        "Grpc": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SuppressDownstreamInstrumentation": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "SuppressDownstreamInstrumentation"
+            ],
+            "title": "Grpc"
+        },
+        "HTTP": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "RecordException"
+            ],
+            "title": "HTTP"
+        },
+        "MySQL": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SetDbStatement": {
+                    "type": "boolean"
+                },
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "RecordException",
+                "SetDbStatement"
+            ],
+            "title": "MySQL"
+        },
+        "SQL": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SetDbStatementForText": {
+                    "type": "boolean"
+                },
+                "SetDbStatementForStoredProcedure": {
+                    "type": "boolean"
+                },
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "RecordException",
+                "SetDbStatementForStoredProcedure",
+                "SetDbStatementForText"
+            ],
+            "title": "SQL"
+        },
+        "SecretsService": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Type": {
+                    "type": "string"
+                },
+                "Endpoint": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "http"
+                    ]
+                }
+            },
+            "required": [
+                "Endpoint",
+                "Type"
+            ],
+            "title": "SecretsService"
+        },
+        "Serilog": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "MinimumLevel": {
+                    "$ref": "#/definitions/MinimumLevel"
+                },
+                "WriteTo": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/WriteTo"
+                    }
+                },
+                "Enrich": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "Enrich",
+                "MinimumLevel",
+                "WriteTo"
+            ],
+            "title": "Serilog"
+        },
+        "MinimumLevel": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Default": {
+                    "type": "string"
+                },
+                "Override": {
+                    "$ref": "#/definitions/Override"
+                }
+            },
+            "required": [
+                "Default",
+                "Override"
+            ],
+            "title": "MinimumLevel"
+        },
+        "Override": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Microsoft": {
+                    "type": "string"
+                },
+                "Microsoft.Hosting.Lifetime": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Microsoft",
+                "Microsoft.Hosting.Lifetime"
+            ],
+            "title": "Override"
+        },
+        "WriteTo": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Args": {
+                    "$ref": "#/definitions/Args"
+                }
+            },
+            "required": [
+                "Args",
+                "Name"
+            ],
+            "title": "WriteTo"
+        },
+        "Args": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "formatter": {
+                    "$ref": "#/definitions/FormatterUnion"
+                },
+                "restrictedToMinimumLevel": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "fileSizeLimitBytes": {
+                    "type": "string",
+                    "format": "integer"
+                },
+                "rollingInterval": {
+                    "type": "string"
+                },
+                "rollOnFileSizeLimit": {
+                    "type": "string",
+                    "format": "boolean"
+                }
+            },
+            "required": [
+                "formatter",
+                "restrictedToMinimumLevel"
+            ],
+            "title": "Args"
+        },
+        "FormatterClass": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "renderMessage": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "renderMessage",
+                "type"
+            ],
+            "title": "FormatterClass"
+        },
+        "FormatterUnion": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/FormatterClass"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            "title": "FormatterUnion"
+        }
+    }
+}

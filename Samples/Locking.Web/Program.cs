@@ -1,5 +1,6 @@
 using ivp.edm.apm;
 using ivp.edm.distributedlock;
+using ivp.edm.secrets;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<SecretsManager>();
 
 IConnectionMultiplexer? _redisConnectionForLocking = null;
 

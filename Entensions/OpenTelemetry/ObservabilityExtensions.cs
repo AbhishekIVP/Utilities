@@ -54,13 +54,6 @@ namespace ivp.edm.apm
                                 serviceName: _observabilityOptions.Service.Name,
                                 serviceVersion: _observabilityOptions.Service.Version);
 
-            // Use IConfiguration binding for AspNetCore instrumentation options.
-            // services.Configure<AspNetCoreInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:AspNetCore"));
-            // services.Configure<HttpClientInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:Http"));
-            // services.Configure<SqlClientInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:Sql"));
-            // services.Configure<GrpcClientInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:Grpc"));
-
-            // Add services to the container.
             OpenTelemetryBuilder _openTelemetryBuilder = services
                                                             .AddSingleton(new Observability
                                                             {
@@ -68,23 +61,8 @@ namespace ivp.edm.apm
                                                                 ServiceMeter = new Meter(_observabilityOptions.Service.Name)
                                                             })
                                                             .AddOpenTelemetry();
-            // MetricsMode _metricsMode;
-            // if (Enum.TryParse<MetricsMode>(configuration["OpenTelemetry:Metrics:Mode"], out _metricsMode) == false)
-            //     _metricsMode = MetricsMode.Otel;
-
-            // TracesMode _tracesMode;
-            // if (Enum.TryParse<TracesMode>(configuration["OpenTelemetry:Traces:Mode"], out _tracesMode) == false)
-            //     _tracesMode = TracesMode.Otel;
-            Console.WriteLine(_observabilityOptions.Traces.Mode);
-            Console.WriteLine(_observabilityOptions.Metrics.Mode);
             if (_observabilityOptions.Traces.Mode == TracesMode.Otel)
             {
-                // MySqlDataInstrumentationOptions _mysqlOptions = new MySqlDataInstrumentationOptions();
-                // configuration.GetSection("OpenTelemetry:Traces:MySql").Bind(_mysqlOptions);
-
-                // EntityFrameworkInstrumentationOptions _efCoreOptions = new EntityFrameworkInstrumentationOptions();
-                // configuration.GetSection("OpenTelemetry:Traces:EFCore").Bind(_efCoreOptions);
-
                 _openTelemetryBuilder.WithTracing(tracerProviderBuilder =>
                         {
                             tracerProviderBuilder
@@ -123,17 +101,6 @@ namespace ivp.edm.apm
                                 .AddHttpClientInstrumentation()
                                 .AddRuntimeInstrumentation()
                                 .AddProcessInstrumentation()
-                                // .AddEventCountersInstrumentation(eventCounterConfigure =>
-                                // {
-                                //     eventCounterConfigure.RefreshIntervalSecs = 1;
-                                //     eventCounterConfigure.AddEventSources(
-                                //         "Microsoft.AspNetCoreHosting",
-                                //         "System.Net.Http",
-                                //         "System.Net.Sockets",
-                                //         "System.Net.NameResolution",
-                                //         "System.Net.Security"
-                                //     );
-                                // })
                                 ;
 
                             switch (_observabilityOptions.Metrics.Mode)
