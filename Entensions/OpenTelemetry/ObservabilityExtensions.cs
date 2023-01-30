@@ -1,18 +1,24 @@
 using OpenTelemetry;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Reflection;
-using OpenTelemetry.Resources;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
 using StackExchange.Redis;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Instrumentation.Http;
+using OpenTelemetry.Instrumentation.MySqlData;
+using OpenTelemetry.Instrumentation.SqlClient;
+using OpenTelemetry.Instrumentation.EntityFrameworkCore;
+using OpenTelemetry.Instrumentation.GrpcNetClient;
 
 namespace ivp.edm.apm
 {
@@ -37,74 +43,64 @@ namespace ivp.edm.apm
             , IConnectionMultiplexer? redisConnection = null
             )
         {
-            var serviceName = configuration["OpenTelemetry:Service:Name"]?.ToString() ?? environment.ApplicationName;
-            var serviceVersion = configuration["OpenTelemetry:Service:Version"]?.ToString() ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
-            var otlpEndpoint = configuration["OpenTelemetry:Endpoint"]?.ToString() ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
+            ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
+            configuration.GetSection("OpenTelemetry").Bind(_observabilityOptions);
+
+            _observabilityOptions.Service.Name = _observabilityOptions.Service.Name ?? environment.ApplicationName;
+            _observabilityOptions.Endpoint = _observabilityOptions.Endpoint ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
 
             var appResourceBuilder = ResourceBuilder.CreateDefault()
                             .AddService(
-                                serviceName: serviceName,
-                                serviceVersion: serviceVersion);
+                                serviceName: _observabilityOptions.Service.Name,
+                                serviceVersion: _observabilityOptions.Service.Version);
 
             // Use IConfiguration binding for AspNetCore instrumentation options.
-            // services.Configure<AspNetCoreInstrumentationOptions>(builder.Configuration.GetSection("AspNetCoreInstrumentation"));
+            // services.Configure<AspNetCoreInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:AspNetCore"));
+            // services.Configure<HttpClientInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:Http"));
+            // services.Configure<SqlClientInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:Sql"));
+            // services.Configure<GrpcClientInstrumentationOptions>(configuration.GetSection("OpenTelemetry:Traces:Grpc"));
 
             // Add services to the container.
             OpenTelemetryBuilder _openTelemetryBuilder = services
                                                             .AddSingleton(new Observability
                                                             {
-                                                                ServiceActivity = new ActivitySource(serviceName),
-                                                                ServiceMeter = new Meter(serviceName)
+                                                                ServiceActivity = new ActivitySource(_observabilityOptions.Service.Name),
+                                                                ServiceMeter = new Meter(_observabilityOptions.Service.Name)
                                                             })
                                                             .AddOpenTelemetry();
-            MetricsMode _metricsMode;
-            if (Enum.TryParse<MetricsMode>(configuration["OpenTelemetry:Metrics:Mode"], out _metricsMode) == false)
-                _metricsMode = MetricsMode.Otel;
+            // MetricsMode _metricsMode;
+            // if (Enum.TryParse<MetricsMode>(configuration["OpenTelemetry:Metrics:Mode"], out _metricsMode) == false)
+            //     _metricsMode = MetricsMode.Otel;
 
-            TracesMode _tracesMode;
-            if (Enum.TryParse<TracesMode>(configuration["OpenTelemetry:Traces:Mode"], out _tracesMode) == false)
-                _tracesMode = TracesMode.Otel;
-
-            if (_tracesMode == TracesMode.Otel)
+            // TracesMode _tracesMode;
+            // if (Enum.TryParse<TracesMode>(configuration["OpenTelemetry:Traces:Mode"], out _tracesMode) == false)
+            //     _tracesMode = TracesMode.Otel;
+            Console.WriteLine(_observabilityOptions.Traces.Mode);
+            Console.WriteLine(_observabilityOptions.Metrics.Mode);
+            if (_observabilityOptions.Traces.Mode == TracesMode.Otel)
             {
+                // MySqlDataInstrumentationOptions _mysqlOptions = new MySqlDataInstrumentationOptions();
+                // configuration.GetSection("OpenTelemetry:Traces:MySql").Bind(_mysqlOptions);
+
+                // EntityFrameworkInstrumentationOptions _efCoreOptions = new EntityFrameworkInstrumentationOptions();
+                // configuration.GetSection("OpenTelemetry:Traces:EFCore").Bind(_efCoreOptions);
+
                 _openTelemetryBuilder.WithTracing(tracerProviderBuilder =>
                         {
                             tracerProviderBuilder
-                                .AddSource(serviceName)
+                                .AddSource(_observabilityOptions.Service.Name)
                                 .SetResourceBuilder(appResourceBuilder)
-                                .AddHttpClientInstrumentation(_ =>
-                                {
-                                    //TODO: Use Options Pattern
-                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Http:RecordException"]);
-                                })
-                                .AddAspNetCoreInstrumentation(_ =>
-                                {
-                                    //TODO: Use Options Pattern
-                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:AspNetCore:RecordException"]);
-                                    _.EnableGrpcAspNetCoreSupport = Convert.ToBoolean(configuration["OpenTelemetry:Traces:AspNetCore:EnableGrpcAspNetCoreSupport"]);
-                                })
-                                .AddSqlClientInstrumentation(_ =>
-                                {
-                                    //TODO: Use Options Pattern
-                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:RecordException"]);
-                                    _.SetDbStatementForStoredProcedure = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureStoreProcCall"]);
-                                    _.SetDbStatementForText = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureQueryText"]);
-                                })
-                                .AddMySqlDataInstrumentation(_ =>
-                                {
-                                    //TODO: Use Options Pattern
-                                    _.RecordException = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:RecordException"]);
-                                    _.SetDbStatement = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureQueryText"]);
-                                })
-                                .AddEntityFrameworkCoreInstrumentation(_ =>
-                                {
-                                    //TODO: Use Options Pattern
-                                    _.SetDbStatementForStoredProcedure = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureStoreProcCall"]);
-                                    _.SetDbStatementForText = Convert.ToBoolean(configuration["OpenTelemetry:Traces:Db:CaptureQueryText"]);
-                                })
+                                //These are given in Core
+                                .AddHttpClientInstrumentation(_ => _ = _observabilityOptions.Traces.Http)
+                                .AddAspNetCoreInstrumentation(_ => _ = _observabilityOptions.Traces.AspNetCore)
+                                .AddSqlClientInstrumentation(_ => _ = _observabilityOptions.Traces.Sql)
+                                .AddGrpcClientInstrumentation(_ => _ = _observabilityOptions.Traces.Grpc)
+                                //These are in Contrib
+                                .AddMySqlDataInstrumentation(_ => _ = _observabilityOptions.Traces.MySql)
+                                .AddEntityFrameworkCoreInstrumentation(_ => _ = _observabilityOptions.Traces.EFCore)
                                 .AddOtlpExporter(opts =>
                                 {
-                                    opts.Endpoint = new Uri(otlpEndpoint);
+                                    opts.Endpoint = new Uri(_observabilityOptions.Endpoint);
                                 })
                                 ;
                             if (redisConnection != null)
@@ -116,12 +112,12 @@ namespace ivp.edm.apm
                         });
             }
 
-            if (_metricsMode != MetricsMode.None)
+            if (_observabilityOptions.Metrics.Mode != MetricsMode.None)
             {
                 _openTelemetryBuilder.WithMetrics(metricProviderBuilder =>
                         {
                             metricProviderBuilder
-                                .AddMeter(serviceName)
+                                .AddMeter(_observabilityOptions.Service.Name)
                                 .SetResourceBuilder(appResourceBuilder)
                                 .AddAspNetCoreInstrumentation()
                                 .AddHttpClientInstrumentation()
@@ -140,21 +136,24 @@ namespace ivp.edm.apm
                                 // })
                                 ;
 
-                            if (_metricsMode == MetricsMode.Otel)
-                                metricProviderBuilder.AddOtlpExporter(opts =>
-                                    {
-                                        opts.Endpoint = new Uri(otlpEndpoint);
-                                    })
-                                    ;
-                            else if (_metricsMode == MetricsMode.Prometheus)
-                                metricProviderBuilder.AddPrometheusExporter()
-                                    ;
-                            else if (_metricsMode == MetricsMode.Console)
-                                metricProviderBuilder.AddConsoleExporter()
-                                    ;
+                            switch (_observabilityOptions.Metrics.Mode)
+                            {
+                                case MetricsMode.Otel:
+                                    metricProviderBuilder.AddOtlpExporter(opts =>
+                                        {
+                                            opts.Endpoint = new Uri(_observabilityOptions.Endpoint);
+                                        })
+                                        ;
+                                    break;
+                                case MetricsMode.Prometheus:
+                                    metricProviderBuilder.AddPrometheusExporter();
+                                    break;
+                                case MetricsMode.Console:
+                                    metricProviderBuilder.AddConsoleExporter();
+                                    break;
+                            }
                         });
             }
-
             _openTelemetryBuilder.StartWithHost();
             return services;
         }
@@ -244,6 +243,72 @@ namespace ivp.edm.apm
             if (_metricsMode == MetricsMode.Prometheus)
                 applicationBuilder.UseOpenTelemetryPrometheusScrapingEndpoint();
         }
+    }
+
+    public class ObservabilityOptions
+    {
+        public ObservabilityOptions()
+        {
+            Logging = new LoggingOptions();
+            Service = new ServiceOptions();
+            Metrics = new MetricsOptions();
+            Traces = new TracesOptions();
+        }
+        public string? Endpoint { get; set; }
+        public LoggingOptions Logging { get; set; }
+        public ServiceOptions Service { get; set; }
+        public MetricsOptions Metrics { get; set; }
+        public TracesOptions Traces { get; set; }
+    }
+
+    public class TracesOptions
+    {
+        public TracesOptions()
+        {
+            Sql = new SqlClientInstrumentationOptions();
+            MySql = new MySqlDataInstrumentationOptions();
+            EFCore = new EntityFrameworkInstrumentationOptions();
+            Http = new HttpClientInstrumentationOptions();
+            Grpc = new GrpcClientInstrumentationOptions();
+            AspNetCore = new AspNetCoreInstrumentationOptions();
+        }
+        public TracesMode Mode { get; set; }
+        public SqlClientInstrumentationOptions Sql { get; set; }
+        public MySqlDataInstrumentationOptions MySql { get; set; }
+        public EntityFrameworkInstrumentationOptions EFCore { get; set; }
+        public HttpClientInstrumentationOptions Http { get; set; }
+        public GrpcClientInstrumentationOptions Grpc { get; set; }
+        public AspNetCoreInstrumentationOptions AspNetCore { get; set; }
+    }
+
+    public class MetricsOptions
+    {
+        public MetricsMode Mode { get; set; }
+    }
+    public class ServiceOptions
+    {
+        public ServiceOptions()
+        {
+            Name = Assembly.GetExecutingAssembly().GetName().Name?.ToString();
+            Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
+        }
+        public string? Name { get; set; }
+        public string Version { get; set; }
+    }
+
+    public class LoggingOptions
+    {
+        public LoggingOptions()
+        {
+            OtelSerilog = new OtelSerilog();
+        }
+        public LoggingMode Mode { get; set; }
+        public OtelSerilog OtelSerilog { get; set; }
+    }
+
+    public class OtelSerilog
+    {
+        public string? Path { get; set; }
     }
 
     public enum LoggingMode
