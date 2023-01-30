@@ -28,11 +28,7 @@ namespace ivp.edm.apm
         {
             return builder.ConfigureServices((context, collection) =>
             {
-                if (redisConnection == null)
-                {
-                    using (var _serviceProvider = collection.BuildServiceProvider())
-                        redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
-                }
+                collection.Configure<ObservabilityOptions>(context.Configuration.GetSection("OpenTelemetry"));
                 collection.AddMonitoring(context.Configuration, context.HostingEnvironment, redisConnection);
             });
         }
@@ -41,11 +37,17 @@ namespace ivp.edm.apm
             , IConfiguration configuration
             , IHostEnvironment environment
             , IConnectionMultiplexer? redisConnection = null
+            , Action<ObservabilityOptions>? setObservabilityOptions = null
             )
         {
-            ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
-            configuration.GetSection("OpenTelemetry").Bind(_observabilityOptions);
-
+            ObservabilityOptions _observabilityOptions;
+            using (var _serviceProvider = services.BuildServiceProvider())
+            {
+                if (redisConnection == null)
+                    redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
+                _observabilityOptions = _serviceProvider.GetService<ObservabilityOptions>() ?? new ObservabilityOptions();
+            }
+            setObservabilityOptions?.Invoke(_observabilityOptions);
             _observabilityOptions.Service.Name = _observabilityOptions.Service.Name ?? environment.ApplicationName;
             _observabilityOptions.Endpoint = _observabilityOptions.Endpoint ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
 
@@ -205,16 +207,15 @@ namespace ivp.edm.apm
     {
         public static void UseOpenTelemetry(this WebApplication applicationBuilder)
         {
-            MetricsMode _metricsMode;
-            Enum.TryParse<MetricsMode>(applicationBuilder.Configuration["OpenTelemetry:Metrics:Mode"], out _metricsMode);
-            if (_metricsMode == MetricsMode.Prometheus)
+            ObservabilityOptions? _observabilityOptions = applicationBuilder.Services.GetService<ObservabilityOptions>();
+            if (_observabilityOptions?.Metrics.Mode == MetricsMode.Prometheus)
                 applicationBuilder.UseOpenTelemetryPrometheusScrapingEndpoint();
         }
     }
 
     public class ObservabilityOptions
     {
-        public ObservabilityOptions()
+        internal ObservabilityOptions()
         {
             Logging = new LoggingOptions();
             Service = new ServiceOptions();
