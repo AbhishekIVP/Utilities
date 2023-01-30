@@ -1,5 +1,6 @@
 using ivp.edm.apm;
 using ivp.edm.distributedlock;
+using ivp.edm.redis;
 using ivp.edm.secrets;
 using StackExchange.Redis;
 
@@ -13,10 +14,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SecretsManager>();
 
-IConnectionMultiplexer? _redisConnectionForLocking = null;
-
-builder.Host.AddDynamicRedisLocking(_ => _redisConnectionForLocking = _);
-builder.Host.AddMonitoring(_redisConnectionForLocking);
+builder.Host.AddRedisClient();
+builder.Host.AddDynamicLocking();
+builder.Host.AddMonitoring();
 builder.Host.AddLogging();
 
 var app = builder.Build();

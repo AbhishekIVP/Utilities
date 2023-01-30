@@ -1,5 +1,4 @@
-﻿using ivp.edm.secrets;
-using Medallion.Threading;
+﻿using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,56 +9,46 @@ namespace ivp.edm.distributedlock;
 
 public static class DistributedLockingExtensions
 {
-    public static IHostBuilder AddDynamicRedisLocking(this IHostBuilder builder, Action<IConnectionMultiplexer>? connectionMultiplexer = null)
+    public static IHostBuilder AddDynamicLocking(this IHostBuilder builder)
     {
         return builder.ConfigureServices((context, collection) =>
         {
-            collection.AddDynamicRedisLocking(context.Configuration, context.HostingEnvironment, connectionMultiplexer);
+            collection.AddDynamicLocking(context.Configuration);
         });
     }
 
-    public static IServiceCollection AddDynamicRedisLocking(this IServiceCollection services
-            , IConfiguration configuration
-            , IHostEnvironment environment
-            , Action<IConnectionMultiplexer>? connectionMultiplexer = null)
+    public static IServiceCollection AddDynamicLocking(this IServiceCollection services
+                , IConfiguration configuration)
     {
-        ConfigurationOptions _options = new ConfigurationOptions();
 
-        if (string.IsNullOrEmpty(configuration["DistributedLocking:Redis:Password:Value"]) == false)
-            _options.Password = configuration["DistributedLocking:Redis:Password:Value"];
+        LockingOptions _lockingOptions = new LockingOptions();
+        configuration.GetSection("DistributedLocking").Bind(_lockingOptions);
 
-        else if (string.IsNullOrEmpty(configuration["DistributedLocking:Redis:Password:ValueFrom"]) == false)
+        switch (_lockingOptions.Type)
         {
-            var _passwordKey = configuration["DistributedLocking:Redis:Password:ValueFrom"];
-            if (_passwordKey == null)
-                throw new ArgumentNullException("DistributedLocking:Redis:Password:ValueFrom");
-
-            var _serviceProvider = services.BuildServiceProvider();
-            SecretsManager? _secretsManager = _serviceProvider?.GetService<SecretsManager>();
-            if (_secretsManager == null)
-                throw new ArgumentNullException($"{nameof(SecretsManager)} is not added to the service collection.");
-
-            var _secretsServiceType = configuration["SecretsService:Type"];
-            if (_secretsServiceType?.ToLower() == "rad")
-                _options.Password = _secretsManager?.GetDefaultStoreSecretAsync(_passwordKey).Result;
-            else if (_secretsServiceType == null)
-                throw new ArgumentNullException("SecretsService:Type");
-            else
-                throw new NotImplementedException($"Secrets Service {_secretsServiceType} type is not implemented.");
+            case LockingBackend.Redis:
+                IConnectionMultiplexer? _redisConnection;
+                using (var _serviceProvider = services.BuildServiceProvider())
+                    _redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
+                if (_redisConnection != null)
+                    services.AddSingleton<IDistributedLockProvider>(_ => new RedisDistributedSynchronizationProvider(_redisConnection.GetDatabase(_lockingOptions.RedisDatabase)));
+                else
+                    throw new ArgumentNullException("IConnectionMultiplexer is not added to the list of services.");
+                break;
+            default:
+                throw new NotImplementedException();
         }
-
-        _options.DefaultDatabase = Convert.ToInt32(configuration["DistributedLocking:Redis:Database"]);
-
-        if (string.IsNullOrEmpty(configuration["DistributedLocking:Redis:Endpoint"]))
-            throw new ArgumentNullException("DistributedLocking:Redis:Endpoint");
-
-        _options.EndPoints.Add(configuration["DistributedLocking:Redis:Endpoint"]);
-        var connection = ConnectionMultiplexer.Connect(_options); // uses StackExchange.Redis
-
-        services.AddSingleton<IDistributedLockProvider>(_ => new RedisDistributedSynchronizationProvider(connection.GetDatabase()));
-
-        connectionMultiplexer?.Invoke(connection);
-
         return services;
+    }
+
+    internal class LockingOptions
+    {
+        public LockingBackend @Type { get; set; } = LockingBackend.Redis;
+        public int RedisDatabase { get; set; } = 59;
+    }
+
+    internal enum LockingBackend
+    {
+        Redis
     }
 }

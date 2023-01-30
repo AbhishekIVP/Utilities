@@ -24,30 +24,31 @@ namespace ivp.edm.apm
 {
     public static class MonitoringServiceCollectionExtensions
     {
-        public static IHostBuilder AddMonitoring(this IHostBuilder builder, IConnectionMultiplexer? redisConnection = null)
+        public static IHostBuilder AddMonitoring(this IHostBuilder builder, Action<IConnectionMultiplexer?>? setRedisConnection = null)
         {
             return builder.ConfigureServices((context, collection) =>
             {
-                collection.Configure<ObservabilityOptions>(context.Configuration.GetSection("OpenTelemetry"));
-                collection.AddMonitoring(context.Configuration, context.HostingEnvironment, redisConnection);
+                collection.AddMonitoring(context.Configuration, context.HostingEnvironment, setRedisConnection);
             });
         }
 
         public static IServiceCollection AddMonitoring(this IServiceCollection services
             , IConfiguration configuration
             , IHostEnvironment environment
-            , IConnectionMultiplexer? redisConnection = null
+            , Action<IConnectionMultiplexer?>? setRedisConnection = null
             , Action<ObservabilityOptions>? setObservabilityOptions = null
             )
         {
-            ObservabilityOptions _observabilityOptions;
+            IConnectionMultiplexer? _redisConnection;
             using (var _serviceProvider = services.BuildServiceProvider())
-            {
-                if (redisConnection == null)
-                    redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
-                _observabilityOptions = _serviceProvider.GetService<ObservabilityOptions>() ?? new ObservabilityOptions();
-            }
+                _redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
+
+            ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
+            configuration.GetSection("OpenTelemetry").Bind(_observabilityOptions);
+
+            setRedisConnection?.Invoke(_redisConnection);
             setObservabilityOptions?.Invoke(_observabilityOptions);
+
             _observabilityOptions.Service.Name = _observabilityOptions.Service.Name ?? environment.ApplicationName;
             _observabilityOptions.Endpoint = _observabilityOptions.Endpoint ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
 
@@ -83,8 +84,8 @@ namespace ivp.edm.apm
                                     opts.Endpoint = new Uri(_observabilityOptions.Endpoint);
                                 })
                                 ;
-                            if (redisConnection != null)
-                                tracerProviderBuilder.AddRedisInstrumentation(redisConnection);
+                            if (_redisConnection != null)
+                                tracerProviderBuilder.AddRedisInstrumentation(_redisConnection);
                             if (environment.IsProduction())
                                 tracerProviderBuilder.SetSampler<TraceIdRatioBasedSampler>();
                             else
@@ -130,32 +131,36 @@ namespace ivp.edm.apm
 
     public static class LoggingServiceCollectionExtensions
     {
-        public static IHostBuilder AddLogging(this IHostBuilder builder, ResourceBuilder? resourceBuilder = null)
+        public static IHostBuilder AddLogging(this IHostBuilder builder, ResourceBuilder? resourceBuilder = null, Action<ObservabilityOptions>? setObservabilityOptions = null)
         {
             return builder.ConfigureLogging((context, loggingBuilder) =>
             {
-                loggingBuilder.AddLogging(context.Configuration, context.HostingEnvironment, resourceBuilder);
+                loggingBuilder.AddLogging(context.Configuration, context.HostingEnvironment, resourceBuilder, setObservabilityOptions);
             });
         }
 
-        public static ILoggingBuilder AddLogging(this ILoggingBuilder builder, IConfiguration configuration, IHostEnvironment environment, ResourceBuilder? resourceBuilder)
+        public static ILoggingBuilder AddLogging(this ILoggingBuilder builder
+                , IConfiguration configuration
+                , IHostEnvironment environment
+                , ResourceBuilder? resourceBuilder
+                , Action<ObservabilityOptions>? setObservabilityOptions = null)
         {
-            var serviceName = configuration["OpenTelemetry:Service:Name"]?.ToString() ?? environment.ApplicationName;
-            var serviceVersion = configuration["OpenTelemetry:Service:Version"]?.ToString() ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
-            var otlpEndpoint = configuration["OpenTelemetry:Endpoint"]?.ToString() ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
+            ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
+            configuration.GetSection("OpenTelemetry").Bind(_observabilityOptions);
+
+            setObservabilityOptions?.Invoke(_observabilityOptions);
+
+            _observabilityOptions.Service.Name = _observabilityOptions.Service.Name ?? environment.ApplicationName;
+            _observabilityOptions.Endpoint = _observabilityOptions.Endpoint ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
 
             var appResourceBuilder = resourceBuilder ?? ResourceBuilder.CreateDefault()
                             .AddService(
-                                serviceName: serviceName,
-                                serviceVersion: serviceVersion);
+                                serviceName: _observabilityOptions.Service.Name,
+                                serviceVersion: _observabilityOptions.Service.Version);
 
             builder.ClearProviders();
-
-            LoggingMode _loggingMode;
-            if (Enum.TryParse<LoggingMode>(configuration["OpenTelemetry:Logging:Mode"], out _loggingMode) == false)
-                _loggingMode = LoggingMode.Otel;
-
-            switch (_loggingMode)
+            Console.WriteLine(_observabilityOptions.Logging.Mode);
+            switch (_observabilityOptions.Logging.Mode)
             {
                 case LoggingMode.OtelSerilog:
                     builder.AddOpenTelemetry(logProviderBuilder =>
@@ -173,7 +178,7 @@ namespace ivp.edm.apm
                                 logProviderBuilder.SetResourceBuilder(appResourceBuilder)
                                 .AddOtlpExporter(opts =>
                                 {
-                                    opts.Endpoint = new Uri(otlpEndpoint);
+                                    opts.Endpoint = new Uri(_observabilityOptions.Endpoint);
                                 })
                                 ;
                             })
@@ -182,8 +187,8 @@ namespace ivp.edm.apm
                 case LoggingMode.Serilog:
                     builder.AddSerilog(new LoggerConfiguration()
                         .ReadFrom.Configuration(configuration)
-                        .Enrich.WithProperty("ServiceName", serviceName)
-                        .Enrich.WithProperty("ServiceVersion", serviceVersion)
+                        .Enrich.WithProperty("ServiceName", _observabilityOptions.Service.Name)
+                        .Enrich.WithProperty("ServiceVersion", _observabilityOptions.Service.Version)
                         .CreateLogger()
                 );
                     break;

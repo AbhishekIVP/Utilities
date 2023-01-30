@@ -14,12 +14,18 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "Redis": {
-                    "$ref": "#/definitions/Redis"
+                "Type": {
+                    "$type": "string",
+                    "enum": [
+                        "Redis"
+                    ]
+                },
+                "RedisDatabase": {
+                    "$type": "integer"
                 }
             },
             "required": [
-                "Redis"
+                "Type"
             ],
             "title": "DistributedLocking"
         },
@@ -32,15 +38,8 @@
                 },
                 "Password": {
                     "$ref": "#/definitions/Password"
-                },
-                "Database": {
-                    "type": "integer"
                 }
             },
-            "required": [
-                "Database",
-                "Endpoint"
-            ],
             "title": "Redis"
         },
         "Password": {
@@ -279,6 +278,9 @@
         },
         "OpenTelemetry": {
             "$ref": "#/definitions/OpenTelemetry"
+        },
+        "Redis": {
+            "$ref": "#/definitions/Redis"
         }
     }
 }
