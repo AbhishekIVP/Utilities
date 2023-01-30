@@ -6,14 +6,8 @@
             "properties": {
                 "DefaultSecretStore": {
                     "type": "string"
-                },
-                "SideCarPort": {
-                    "type": "integer"
                 }
             },
-            "required": [
-                "DefaultSecretStore"
-            ],
             "title": "Dapr"
         },
         "DistributedLocking": {
@@ -45,8 +39,7 @@
             },
             "required": [
                 "Database",
-                "Endpoint",
-                "Password"
+                "Endpoint"
             ],
             "title": "Redis"
         },
@@ -61,10 +54,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "Value",
-                "ValueFrom"
-            ],
             "title": "Password"
         },
         "OpenTelemetry": {
@@ -91,13 +80,6 @@
                     "$ref": "#/definitions/Traces"
                 }
             },
-            "required": [
-                "Endpoint",
-                "Logging",
-                "Metrics",
-                "Service",
-                "Traces"
-            ],
             "title": "OpenTelemetry"
         },
         "OpenTelemetryLogging": {
@@ -111,10 +93,6 @@
                     "$ref": "#/definitions/OtelSerilog"
                 }
             },
-            "required": [
-                "Mode",
-                "OtelSerilog"
-            ],
             "title": "OpenTelemetryLogging"
         },
         "OtelSerilog": {
@@ -125,9 +103,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "Path"
-            ],
             "title": "OtelSerilog"
         },
         "Metrics": {
@@ -138,9 +113,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "Mode"
-            ],
             "title": "Metrics"
         },
         "Service": {
@@ -154,10 +126,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "Name",
-                "Version"
-            ],
             "title": "Service"
         },
         "Traces": {
@@ -186,15 +154,6 @@
                     "$ref": "#/definitions/ASPNetCore"
                 }
             },
-            "required": [
-                "AspNetCore",
-                "EFCore",
-                "Grpc",
-                "Http",
-                "Mode",
-                "MySql",
-                "Sql"
-            ],
             "title": "Traces"
         },
         "ASPNetCore": {
@@ -208,10 +167,6 @@
                     "type": "boolean"
                 }
             },
-            "required": [
-                "EnableGrpcAspNetCoreSupport",
-                "RecordException"
-            ],
             "title": "ASPNetCore"
         },
         "EFCore": {
@@ -225,10 +180,6 @@
                     "type": "boolean"
                 }
             },
-            "required": [
-                "SetDbStatementForStoredProcedure",
-                "SetDbStatementForText"
-            ],
             "title": "EFCore"
         },
         "Grpc": {
@@ -239,9 +190,6 @@
                     "type": "boolean"
                 }
             },
-            "required": [
-                "SuppressDownstreamInstrumentation"
-            ],
             "title": "Grpc"
         },
         "HTTP": {
@@ -252,9 +200,6 @@
                     "type": "boolean"
                 }
             },
-            "required": [
-                "RecordException"
-            ],
             "title": "HTTP"
         },
         "MySQL": {
@@ -268,10 +213,6 @@
                     "type": "boolean"
                 }
             },
-            "required": [
-                "RecordException",
-                "SetDbStatement"
-            ],
             "title": "MySQL"
         },
         "SQL": {
@@ -288,11 +229,6 @@
                     "type": "boolean"
                 }
             },
-            "required": [
-                "RecordException",
-                "SetDbStatementForStoredProcedure",
-                "SetDbStatementForText"
-            ],
             "title": "SQL"
         },
         "SecretsService": {
@@ -310,10 +246,6 @@
                     ]
                 }
             },
-            "required": [
-                "Endpoint",
-                "Type"
-            ],
             "title": "SecretsService"
         }
     },
