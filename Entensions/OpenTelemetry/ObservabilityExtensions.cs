@@ -159,7 +159,6 @@ namespace ivp.edm.apm
                                 serviceVersion: _observabilityOptions.Service.Version);
 
             builder.ClearProviders();
-            Console.WriteLine(_observabilityOptions.Logging.Mode);
             switch (_observabilityOptions.Logging.Mode)
             {
                 case LoggingMode.OtelSerilog:

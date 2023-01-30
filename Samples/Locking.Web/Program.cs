@@ -2,7 +2,6 @@ using ivp.edm.apm;
 using ivp.edm.distributedlock;
 using ivp.edm.redis;
 using ivp.edm.secrets;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
