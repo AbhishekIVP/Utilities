@@ -1,0 +1,286 @@
+{
+    "definitions": {
+        "Dapr": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "DefaultSecretStore": {
+                    "type": "string"
+                }
+            },
+            "title": "Dapr"
+        },
+        "DistributedLocking": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Type": {
+                    "$type": "string",
+                    "enum": [
+                        "Redis"
+                    ]
+                },
+                "RedisDatabase": {
+                    "$type": "integer"
+                }
+            },
+            "required": [
+                "Type"
+            ],
+            "title": "DistributedLocking"
+        },
+        "Redis": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Endpoint": {
+                    "type": "string"
+                },
+                "Password": {
+                    "$ref": "#/definitions/Password"
+                }
+            },
+            "title": "Redis"
+        },
+        "Password": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Value": {
+                    "type": "string"
+                },
+                "ValueFrom": {
+                    "type": "string"
+                }
+            },
+            "title": "Password"
+        },
+        "OpenTelemetry": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Endpoint": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "http"
+                    ]
+                },
+                "Logging": {
+                    "$ref": "#/definitions/OpenTelemetryLogging"
+                },
+                "Service": {
+                    "$ref": "#/definitions/Service"
+                },
+                "Metrics": {
+                    "$ref": "#/definitions/Metrics"
+                },
+                "Traces": {
+                    "$ref": "#/definitions/Traces"
+                }
+            },
+            "title": "OpenTelemetry"
+        },
+        "OpenTelemetryLogging": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Mode": {
+                    "type": "string",
+                    "enum": [
+                        "Otel",
+                        "OtelSerilog",
+                        "Serilog",
+                        "Console",
+                        "None"
+                    ]
+                },
+                "OtelSerilog": {
+                    "$ref": "#/definitions/OtelSerilog"
+                }
+            },
+            "title": "OpenTelemetryLogging"
+        },
+        "OtelSerilog": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Path": {
+                    "type": "string"
+                }
+            },
+            "title": "OtelSerilog"
+        },
+        "Metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Mode": {
+                    "type": "string",
+                    "enum": [
+                        "Otel",
+                        "None",
+                        "Prometheus",
+                        "Console"
+                    ]
+                }
+            },
+            "title": "Metrics"
+        },
+        "Service": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Version": {
+                    "type": "string"
+                }
+            },
+            "title": "Service"
+        },
+        "Traces": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Mode": {
+                    "type": "string",
+                    "enum": [
+                        "Otel",
+                        "None"
+                    ]
+                },
+                "Sql": {
+                    "$ref": "#/definitions/SQL"
+                },
+                "MySql": {
+                    "$ref": "#/definitions/MySQL"
+                },
+                "EFCore": {
+                    "$ref": "#/definitions/EFCore"
+                },
+                "Http": {
+                    "$ref": "#/definitions/HTTP"
+                },
+                "Grpc": {
+                    "$ref": "#/definitions/Grpc"
+                },
+                "AspNetCore": {
+                    "$ref": "#/definitions/ASPNetCore"
+                }
+            },
+            "title": "Traces"
+        },
+        "ASPNetCore": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "EnableGrpcAspNetCoreSupport": {
+                    "type": "boolean"
+                },
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "title": "ASPNetCore"
+        },
+        "EFCore": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SetDbStatementForStoredProcedure": {
+                    "type": "boolean"
+                },
+                "SetDbStatementForText": {
+                    "type": "boolean"
+                }
+            },
+            "title": "EFCore"
+        },
+        "Grpc": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SuppressDownstreamInstrumentation": {
+                    "type": "boolean"
+                }
+            },
+            "title": "Grpc"
+        },
+        "HTTP": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "title": "HTTP"
+        },
+        "MySQL": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SetDbStatement": {
+                    "type": "boolean"
+                },
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "title": "MySQL"
+        },
+        "SQL": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "SetDbStatementForText": {
+                    "type": "boolean"
+                },
+                "SetDbStatementForStoredProcedure": {
+                    "type": "boolean"
+                },
+                "RecordException": {
+                    "type": "boolean"
+                }
+            },
+            "title": "SQL"
+        },
+        "SecretsService": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Type": {
+                    "type": "string"
+                },
+                "Endpoint": {
+                    "type": "string",
+                    "format": "uri",
+                    "qt-uri-protocols": [
+                        "http"
+                    ]
+                }
+            },
+            "title": "SecretsService"
+        }
+    },
+    "type": "object",
+    "properties": {
+        "DistributedLocking": {
+            "$ref": "#/definitions/DistributedLocking"
+        },
+        "SecretsService": {
+            "$ref": "#/definitions/SecretsService"
+        },
+        "Dapr": {
+            "$ref": "#/definitions/Dapr"
+        },
+        "OpenTelemetry": {
+            "$ref": "#/definitions/OpenTelemetry"
+        },
+        "Redis": {
+            "$ref": "#/definitions/Redis"
+        }
+    }
+}
