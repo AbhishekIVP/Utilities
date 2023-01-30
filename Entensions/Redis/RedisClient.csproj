@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Commons\DistributedSecrets\DistributedSecrets.csproj" />
+    <ProjectReference Include="..\..\Commons\Validations\Validations.csproj" />
   </ItemGroup>
 
   <ItemGroup>

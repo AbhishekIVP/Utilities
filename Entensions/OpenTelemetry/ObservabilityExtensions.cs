@@ -19,6 +19,7 @@ using OpenTelemetry.Instrumentation.MySqlData;
 using OpenTelemetry.Instrumentation.SqlClient;
 using OpenTelemetry.Instrumentation.EntityFrameworkCore;
 using OpenTelemetry.Instrumentation.GrpcNetClient;
+using ivp.edm.validations;
 
 namespace ivp.edm.apm
 {
@@ -39,9 +40,7 @@ namespace ivp.edm.apm
             , Action<ObservabilityOptions>? setObservabilityOptions = null
             )
         {
-            IConnectionMultiplexer? _redisConnection;
-            using (var _serviceProvider = services.BuildServiceProvider())
-                _redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
+            IConnectionMultiplexer? _redisConnection = services.Instance<IConnectionMultiplexer>();
 
             ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
             configuration.GetSection("OpenTelemetry").Bind(_observabilityOptions);

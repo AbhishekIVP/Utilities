@@ -1,4 +1,5 @@
 ﻿using ivp.edm.secrets;
+using ivp.edm.validations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,27 +23,20 @@ public static class RedisExtensions
 
         ConfigurationOptions _options = new ConfigurationOptions();
 
-        if (string.IsNullOrEmpty(_redisOptions.Endpoint))
-            throw new ArgumentNullException("Redis:Endpoint");
-        else
-            _options.EndPoints.Add(_redisOptions.Endpoint);
+        ArgumentGuard.NotNullOrEmpty(_redisOptions.Endpoint, "Redis:Endpoint");
+        _options.EndPoints.Add(_redisOptions.Endpoint);
 
         if (string.IsNullOrEmpty(_redisOptions.Password.Value) == false)
             _options.Password = _redisOptions.Password.Value;
-
         else if (string.IsNullOrEmpty(_redisOptions.Password.ValueFrom) == false)
         {
-            SecretsManager? _secretsManager;
-            using (var _serviceProvider = services.BuildServiceProvider())
-            {
-                _secretsManager = _serviceProvider?.GetService<SecretsManager>();
-                if (_secretsManager == null)
-                    throw new ArgumentNullException($"{nameof(SecretsManager)} is not added to the service collection.");
-            }
+            SecretsManager _secretsManager = services.ValidatedInstance<SecretsManager>();
+
             var _secretsServiceType = configuration["SecretsService:Type"];
-            if (_secretsServiceType == null)
-                throw new ArgumentNullException("SecretsService:Type");
-            else if (_secretsServiceType.ToLower() == "rad")
+
+            ArgumentGuard.NotNull(configuration["SecretsService:Type"], "SecretsService:Type");
+
+            if (_secretsServiceType.ToLower() == "rad")
                 _options.Password = _secretsManager.GetDefaultStoreSecretAsync(_redisOptions.Password.ValueFrom).Result;
             else
                 throw new NotImplementedException($"Secrets Service {_secretsServiceType} type is not implemented.");

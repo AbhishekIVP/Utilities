@@ -1,4 +1,5 @@
-﻿using Medallion.Threading;
+﻿using ivp.edm.validations;
+using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,13 +28,8 @@ public static class DistributedLockingExtensions
         switch (_lockingOptions.Type)
         {
             case LockingBackend.Redis:
-                IConnectionMultiplexer? _redisConnection;
-                using (var _serviceProvider = services.BuildServiceProvider())
-                    _redisConnection = _serviceProvider.GetService<IConnectionMultiplexer>();
-                if (_redisConnection != null)
-                    services.AddSingleton<IDistributedLockProvider>(_ => new RedisDistributedSynchronizationProvider(_redisConnection.GetDatabase(_lockingOptions.RedisDatabase)));
-                else
-                    throw new ArgumentNullException("IConnectionMultiplexer is not added to the list of services.");
+                IConnectionMultiplexer _redisConnection = services.ValidatedInstance<IConnectionMultiplexer>();
+                services.AddSingleton<IDistributedLockProvider>(_ => new RedisDistributedSynchronizationProvider(_redisConnection.GetDatabase(_lockingOptions.RedisDatabase)));
                 break;
             default:
                 throw new NotImplementedException();

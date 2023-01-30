@@ -1,4 +1,5 @@
 using Dapr.Client;
+using ivp.edm.validations;
 using Microsoft.Extensions.Configuration;
 
 namespace ivp.edm.secrets;
@@ -35,8 +36,7 @@ public class SecretsManager
 
     public async Task<string> GetSecretAsync(string secretStoreName, string secretName, string secretKey)
     {
-        if (string.IsNullOrWhiteSpace(secretKey))
-            throw new ArgumentNullException(nameof(secretKey));
+        ArgumentGuard.NotNullOrWhiteSpace(secretKey);
 
         // Get secret from a local secret store
         var secret = await GetDaprSecretAsync(secretStoreName, secretName);
@@ -49,11 +49,8 @@ public class SecretsManager
 
     public async Task<Dictionary<string, string>> GetDaprSecretAsync(string secretStoreName, string secretName)
     {
-        if (string.IsNullOrWhiteSpace(secretStoreName))
-            throw new ArgumentNullException(nameof(secretStoreName));
-
-        if (string.IsNullOrWhiteSpace(secretName))
-            throw new ArgumentNullException(nameof(secretName));
+        ArgumentGuard.NotNullOrWhiteSpace(secretStoreName);
+        ArgumentGuard.NotNullOrWhiteSpace(secretName);
 
         return await _daprClient.GetSecretAsync(secretStoreName, secretName);
     }
