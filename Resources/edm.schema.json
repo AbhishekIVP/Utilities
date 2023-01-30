@@ -1,38 +1,5 @@
 {
     "definitions": {
-        "edm": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "Logging": {
-                    "$ref": "#/definitions/Logging"
-                },
-                "DistributedLocking": {
-                    "$ref": "#/definitions/DistributedLocking"
-                },
-                "SecretsService": {
-                    "$ref": "#/definitions/SecretsService"
-                },
-                "Dapr": {
-                    "$ref": "#/definitions/Dapr"
-                },
-                "OpenTelemetry": {
-                    "$ref": "#/definitions/OpenTelemetry"
-                },
-                "Serilog": {
-                    "$ref": "#/definitions/Serilog"
-                }
-            },
-            "required": [
-                "Dapr",
-                "DistributedLocking",
-                "Logging",
-                "OpenTelemetry",
-                "SecretsService",
-                "Serilog"
-            ],
-            "title": "edm"
-        },
         "Dapr": {
             "type": "object",
             "additionalProperties": false,
@@ -45,8 +12,7 @@
                 }
             },
             "required": [
-                "DefaultSecretStore",
-                "SideCarPort"
+                "DefaultSecretStore"
             ],
             "title": "Dapr"
         },
@@ -100,36 +66,6 @@
                 "ValueFrom"
             ],
             "title": "Password"
-        },
-        "Logging": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "LogLevel": {
-                    "$ref": "#/definitions/LogLevel"
-                }
-            },
-            "required": [
-                "LogLevel"
-            ],
-            "title": "Logging"
-        },
-        "LogLevel": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "Default": {
-                    "type": "string"
-                },
-                "Microsoft.AspNetCore": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "Default",
-                "Microsoft.AspNetCore"
-            ],
-            "title": "LogLevel"
         },
         "OpenTelemetry": {
             "type": "object",
@@ -379,143 +315,21 @@
                 "Type"
             ],
             "title": "SecretsService"
+        }
+    },
+    "type": "object",
+    "properties": {
+        "DistributedLocking": {
+            "$ref": "#/definitions/DistributedLocking"
         },
-        "Serilog": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "MinimumLevel": {
-                    "$ref": "#/definitions/MinimumLevel"
-                },
-                "WriteTo": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/WriteTo"
-                    }
-                },
-                "Enrich": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            },
-            "required": [
-                "Enrich",
-                "MinimumLevel",
-                "WriteTo"
-            ],
-            "title": "Serilog"
+        "SecretsService": {
+            "$ref": "#/definitions/SecretsService"
         },
-        "MinimumLevel": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "Default": {
-                    "type": "string"
-                },
-                "Override": {
-                    "$ref": "#/definitions/Override"
-                }
-            },
-            "required": [
-                "Default",
-                "Override"
-            ],
-            "title": "MinimumLevel"
+        "Dapr": {
+            "$ref": "#/definitions/Dapr"
         },
-        "Override": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "Microsoft": {
-                    "type": "string"
-                },
-                "Microsoft.Hosting.Lifetime": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "Microsoft",
-                "Microsoft.Hosting.Lifetime"
-            ],
-            "title": "Override"
-        },
-        "WriteTo": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "Name": {
-                    "type": "string"
-                },
-                "Args": {
-                    "$ref": "#/definitions/Args"
-                }
-            },
-            "required": [
-                "Args",
-                "Name"
-            ],
-            "title": "WriteTo"
-        },
-        "Args": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "formatter": {
-                    "$ref": "#/definitions/FormatterUnion"
-                },
-                "restrictedToMinimumLevel": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "fileSizeLimitBytes": {
-                    "type": "string",
-                    "format": "integer"
-                },
-                "rollingInterval": {
-                    "type": "string"
-                },
-                "rollOnFileSizeLimit": {
-                    "type": "string",
-                    "format": "boolean"
-                }
-            },
-            "required": [
-                "formatter",
-                "restrictedToMinimumLevel"
-            ],
-            "title": "Args"
-        },
-        "FormatterClass": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "type": {
-                    "type": "string"
-                },
-                "renderMessage": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "renderMessage",
-                "type"
-            ],
-            "title": "FormatterClass"
-        },
-        "FormatterUnion": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/FormatterClass"
-                },
-                {
-                    "type": "string"
-                }
-            ],
-            "title": "FormatterUnion"
+        "OpenTelemetry": {
+            "$ref": "#/definitions/OpenTelemetry"
         }
     }
 }
