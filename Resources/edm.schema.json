@@ -87,7 +87,14 @@
             "additionalProperties": false,
             "properties": {
                 "Mode": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "Otel",
+                        "OtelSerilog",
+                        "Serilog",
+                        "Console",
+                        "None"
+                    ]
                 },
                 "OtelSerilog": {
                     "$ref": "#/definitions/OtelSerilog"
@@ -110,7 +117,13 @@
             "additionalProperties": false,
             "properties": {
                 "Mode": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "Otel",
+                        "None",
+                        "Prometheus",
+                        "Console"
+                    ]
                 }
             },
             "title": "Metrics"
@@ -133,7 +146,11 @@
             "additionalProperties": false,
             "properties": {
                 "Mode": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "Otel",
+                        "None"
+                    ]
                 },
                 "Sql": {
                     "$ref": "#/definitions/SQL"
