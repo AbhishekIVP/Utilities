@@ -10,7 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<SecretsManager>();
+builder.Services.AddDaprClient();
+builder.Services.AddScoped<SecretsManager>();
 
 builder.Host.AddMonitoring();
 builder.Host.AddLogging();

@@ -8,14 +8,10 @@ public class SecretsManager
 {
     private readonly IConfiguration _configuration;
     private readonly DaprClient _daprClient;
-    public SecretsManager(IConfiguration configuration)
+    public SecretsManager(IConfiguration configuration, DaprClient daprClient)
     {
         _configuration = configuration;
-        _daprClient = Register();
-    }
-    private DaprClient Register()
-    {
-        return new DaprClientBuilder().Build();
+        _daprClient = daprClient;
     }
 
     public async Task<string> GetDefaultStoreSecretAsync(string secretName)
