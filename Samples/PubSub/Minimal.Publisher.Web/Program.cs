@@ -19,6 +19,6 @@ app.MapGet("/", async () =>
     }
 });
 
-app.Run();
+await app.RunAsync();
 
 public record Order([property: JsonPropertyName("orderId")] int OrderId);
