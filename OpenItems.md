@@ -15,4 +15,4 @@
 
 - [x] SecretsManager needs to be injected
   
-- [ ] Notification -> Pub/Sub
+- [x] Notification -> Pub/Sub
