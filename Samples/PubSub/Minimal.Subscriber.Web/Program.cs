@@ -20,6 +20,6 @@ app.MapPost("/orders", [Topic("redispubsub", "orders")] (Order order) =>
     return Results.Ok(order);
 });
 
-await app.RunAsync();
+app.Run();
 
 public record Order([property: JsonPropertyName("orderId")] int OrderId);
