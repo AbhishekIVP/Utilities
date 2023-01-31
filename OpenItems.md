@@ -3,7 +3,7 @@
 - [ ]    3. Dapr Logs
 - [x]    4. Options Pattern
 - [ ]    5. Test Cases
-- [ ]    6. Add AWS Secrets
+- [x]    6. Add AWS/Azure Secrets
 - [x]    7. Define proper Exception class
 - [x]    8. Validations, [It should be based on AOP, but for now it is fine]
 
