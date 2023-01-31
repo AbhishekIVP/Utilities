@@ -40,6 +40,7 @@ namespace ivp.edm.apm
             , Action<ObservabilityOptions>? setObservabilityOptions = null
             )
         {
+            ArgumentGuard.NotNull<IServiceCollection>(services);
             IConnectionMultiplexer? _redisConnection = services.Instance<IConnectionMultiplexer>();
 
             ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
