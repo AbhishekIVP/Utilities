@@ -1,4 +1,3 @@
-using Dapr.Client;
 using ivp.edm.apm;
 using ivp.edm.secrets;
 
@@ -11,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<DaprClient>(new DaprClientBuilder().Build());
+builder.Services.AddDaprClient();
 builder.Services.AddScoped<SecretsManager>();
 
 builder.Host.AddMonitoring();

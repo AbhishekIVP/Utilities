@@ -1,7 +1,5 @@
-﻿using System;
-using Dapr.Client;
+﻿using Dapr.Client;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 for (int i = 1; i <= 10; i++)
 {
