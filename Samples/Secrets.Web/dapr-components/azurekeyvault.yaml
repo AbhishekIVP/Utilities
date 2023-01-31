@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: azurekeyvault
+spec:
+  type: secretstores.azure.keyvault
+  version: v1
+  metadata:
+    - name: vaultName
+      value: "edmdaprsecrets"
+    - name: azureTenantId
+      value: "f3cba89e-abf1-4c89-b1b4-277d5b394a4f"
+    - name: azureClientId
+      value: "c67aa9a9-2976-4fff-a426-1f16431e495c"
+    - name: azureClientSecret
+      value: "9kH8Q~KKGy3pCZ0AEMdm8CutAoPJ4FvdQNJs6aec"
