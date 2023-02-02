@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Entensions\DistributedLock\DistributedLock.csproj" />
-    <ProjectReference Include="..\..\..\Entensions\OpenTelemetry\OpenTelemetry.Apm.csproj" />
-    <ProjectReference Include="..\..\..\Entensions\Redis\RedisClient.csproj" />
+    <ProjectReference Include="..\..\..\Entensions\MasterExtension\MasterExtension.csproj" />
   </ItemGroup>
 
 </Project>

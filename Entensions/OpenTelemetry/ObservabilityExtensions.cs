@@ -25,17 +25,18 @@ namespace ivp.edm.apm
 {
     public static class MonitoringServiceCollectionExtensions
     {
-        public static IHostBuilder AddMonitoring(this IHostBuilder builder, Action<IConnectionMultiplexer?>? setRedisConnection = null)
+        public static IHostBuilder AddMonitoring(this IHostBuilder builder)
         {
             return builder.ConfigureServices((context, collection) =>
             {
-                collection.AddMonitoring(context.Configuration, context.HostingEnvironment, setRedisConnection);
+                collection.AddMonitoring(context.Configuration, context.HostingEnvironment);
             });
         }
 
         public static IServiceCollection AddMonitoring(this IServiceCollection services
             , IConfiguration configuration
             , IHostEnvironment environment
+            , ResourceBuilder? resourceBuilder = null
             , Action<IConnectionMultiplexer?>? setRedisConnection = null
             , Action<ObservabilityOptions>? setObservabilityOptions = null
             )
@@ -52,7 +53,7 @@ namespace ivp.edm.apm
             _observabilityOptions.Service.Name = _observabilityOptions.Service.Name ?? environment.ApplicationName;
             _observabilityOptions.Endpoint = _observabilityOptions.Endpoint ?? (environment.IsProduction() ? "http://otel-collector:4317" : "http://localhost:4317");
 
-            var appResourceBuilder = ResourceBuilder.CreateDefault()
+            var appResourceBuilder = resourceBuilder ?? ResourceBuilder.CreateDefault()
                             .AddService(
                                 serviceName: _observabilityOptions.Service.Name,
                                 serviceVersion: _observabilityOptions.Service.Version);
@@ -131,18 +132,18 @@ namespace ivp.edm.apm
 
     public static class LoggingServiceCollectionExtensions
     {
-        public static IHostBuilder AddLogging(this IHostBuilder builder, ResourceBuilder? resourceBuilder = null, Action<ObservabilityOptions>? setObservabilityOptions = null)
+        public static IHostBuilder AddLogging(this IHostBuilder builder)
         {
             return builder.ConfigureLogging((context, loggingBuilder) =>
             {
-                loggingBuilder.AddLogging(context.Configuration, context.HostingEnvironment, resourceBuilder, setObservabilityOptions);
+                loggingBuilder.AddLogging(context.Configuration, context.HostingEnvironment);
             });
         }
 
         public static ILoggingBuilder AddLogging(this ILoggingBuilder builder
                 , IConfiguration configuration
                 , IHostEnvironment environment
-                , ResourceBuilder? resourceBuilder
+                , ResourceBuilder? resourceBuilder = null
                 , Action<ObservabilityOptions>? setObservabilityOptions = null)
         {
             ObservabilityOptions _observabilityOptions = new ObservabilityOptions();
