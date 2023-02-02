@@ -36,9 +36,4 @@ namespace ivp.edm.pubsub
             return app;
         }
     }
-    public class TopicRouteMapping
-    {
-        public string QueueName { get; set; } = string.Empty;
-        public string MethodRoute { get; set; } = string.Empty;
-    }
 }
