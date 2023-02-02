@@ -3,8 +3,9 @@ using ivp.edm.apm;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.AddEverything();
-builder.AddExtensions(Enable.APM | Enable.DAPR | Enable.LOCKING | Enable.REDIS | Enable.SECRETS | Enable.LOG);
+builder.AddExtensions();
+// builder.AddExtensions(Enable.DAPR | Enable.APM);
+// builder.AddExtensions(Enable.APM | Enable.DAPR | Enable.LOCKING | Enable.REDIS | Enable.SECRETS | Enable.LOG);
 
 // Add services to the container.
 

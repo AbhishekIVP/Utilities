@@ -10,39 +10,30 @@ namespace ivp.edm;
 
 public static class MasterExtensions
 {
-    public static WebApplicationBuilder AddEverything(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddExtensions(this WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<DaprClient>(new DaprClientBuilder().Build());
-        builder.Services.AddScoped<SecretsManager>();
-
-        builder.Services.AddRedisClient(builder.Configuration);
-        builder.Services.AddDynamicLocking(builder.Configuration);
-
-        builder.Services.AddMonitoring(builder.Configuration, builder.Environment);
-
-        builder.Logging.AddLogging(builder.Configuration, builder.Environment);
-
+        builder.AddExtensions(Enable.ALL);
         return builder;
     }
 
     public static WebApplicationBuilder AddExtensions(this WebApplicationBuilder builder, Enable extensions)
     {
-        if (extensions.HasFlag(Enable.LOG))
+        if (extensions.HasFlag(Enable.LOG) || extensions.HasFlag(Enable.ALL))
             builder.Logging.AddLogging(builder.Configuration, builder.Environment);
 
-        if (extensions.HasFlag(Enable.LOCKING | Enable.DAPR | Enable.REDIS | Enable.SECRETS))
+        if (extensions.HasFlag(Enable.LOCKING) || extensions.HasFlag(Enable.DAPR) || extensions.HasFlag(Enable.REDIS) || extensions.HasFlag(Enable.SECRETS) || extensions.HasFlag(Enable.ALL))
             builder.Services.AddSingleton<DaprClient>(new DaprClientBuilder().Build());
 
-        if (extensions.HasFlag(Enable.LOCKING | Enable.REDIS | Enable.SECRETS))
+        if (extensions.HasFlag(Enable.LOCKING) || extensions.HasFlag(Enable.REDIS) || extensions.HasFlag(Enable.SECRETS) || extensions.HasFlag(Enable.ALL))
             builder.Services.AddScoped<SecretsManager>();
 
-        if (extensions.HasFlag(Enable.LOCKING | Enable.REDIS))
+        if (extensions.HasFlag(Enable.LOCKING) || extensions.HasFlag(Enable.REDIS) || extensions.HasFlag(Enable.ALL))
             builder.Services.AddRedisClient(builder.Configuration);
 
-        if (extensions.HasFlag(Enable.LOCKING))
+        if (extensions.HasFlag(Enable.LOCKING) || extensions.HasFlag(Enable.ALL))
             builder.Services.AddDynamicLocking(builder.Configuration);
 
-        if (extensions.HasFlag(Enable.APM))
+        if (extensions.HasFlag(Enable.APM) || extensions.HasFlag(Enable.ALL))
             builder.Services.AddMonitoring(builder.Configuration, builder.Environment);
 
         return builder;
@@ -50,10 +41,11 @@ public static class MasterExtensions
 }
 public enum Enable
 {
-    DAPR = 0,
-    SECRETS = 1,
-    REDIS = 2,
-    LOCKING = 4,
-    APM = 8,
-    LOG = 16
+    ALL = 1,
+    DAPR = 2,
+    SECRETS = 4,
+    REDIS = 8,
+    LOCKING = 16,
+    APM = 32,
+    LOG = 64
 }
