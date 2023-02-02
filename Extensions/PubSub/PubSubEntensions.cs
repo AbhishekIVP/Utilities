@@ -18,19 +18,17 @@ public static class PubSubEntensions
     public static IServiceCollection InitializePubSub(this IServiceCollection services, IConfiguration configuration)
     {
         ServiceChainGuard.ValidateInstance<DaprClient>(services);
-
-        //read config from configuration
-        //GET THE DEFAULT PUB SUB PROVIDER 
-        //ATTACH CLIENT ID IF MULTI TENANT
-        string pubSubName = "rabbitmq-client2";
-
         //Adding Declarative way
         //read from config, kubernetes or local
-        //
-        services.AddOptions<PubSubOptions>().Configure(_ =>
+        services.AddOptions<PubSubOptions>().Bind(configuration.GetSection("PubSub")).Configure(_ =>
         {
-            _.PubSubName = pubSubName;
-            _.TopicRouteMapping = new List<TopicRouteMapping>() { new TopicRouteMapping() { QueueName = "edmqueue", MethodRoute = "ProcessMessage" } };
+            if (_.IsMultiTenant)
+            {
+                //read config from configuration
+                //GET THE DEFAULT PUB SUB PROVIDER 
+                //ATTACH CLIENT ID IF MULTI TENANT
+                _.Name += "client2";
+            }
         });
         return services;
     }
@@ -38,8 +36,17 @@ public static class PubSubEntensions
 
 public class PubSubOptions
 {
-    public string PubSubName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public QueueProvider QueueProvider { get; set; } = QueueProvider.RABBITMQ;
+    public bool IsMultiTenant { get; set; } = false;
     public List<TopicRouteMapping> TopicRouteMapping { get; set; } = new List<TopicRouteMapping>();
+}
+
+public enum QueueProvider
+{
+    RABBITMQ,
+    PULSAR,
+    REDIS
 }
 
 public class TopicRouteMapping

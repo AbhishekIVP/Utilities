@@ -31,7 +31,7 @@ namespace ivp.edm.pubsub
             {
                 app.MapControllerRoute(
                     name: map.MethodRoute,
-                    pattern: map.MethodRoute).WithTopic(_options.PubSubName, map.QueueName);
+                    pattern: map.MethodRoute).WithTopic(_options.Name, map.QueueName);
             }
             return app;
         }
