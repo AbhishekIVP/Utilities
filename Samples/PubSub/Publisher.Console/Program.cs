@@ -7,7 +7,7 @@ for (int i = 1; i <= 10; i++)
     using var client = new DaprClientBuilder().Build();
 
     // Publish an event/message using Dapr PubSub
-    await client.PublishEventAsync("redispubsub", "orders", order);
+    await client.PublishEventAsync("rabbitmq-client2", "edmqueue", order);
     Console.WriteLine("Published data: " + order);
 
     await Task.Delay(TimeSpan.FromSeconds(1));
