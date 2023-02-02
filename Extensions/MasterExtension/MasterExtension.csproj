@@ -10,5 +10,6 @@
     <ProjectReference Include="..\DistributedLock\DistributedLock.csproj" />
     <ProjectReference Include="..\OpenTelemetry\OpenTelemetry.Apm.csproj" />
     <ProjectReference Include="..\Redis\RedisClient.csproj" />
+    <ProjectReference Include="..\PubSub\PubSub.csproj" />
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@ public static class ServiceChainGuard
 {
     public static T ValidatedInstance<T>(this IServiceCollection services)
     {
+        ArgumentGuard.NotNull<IServiceCollection>(services);
+
         T? _instance;
         using (var _serviceProvider = services.BuildServiceProvider())
             _instance = _serviceProvider.GetService<T>();
@@ -16,8 +18,20 @@ public static class ServiceChainGuard
         return _instance;
     }
 
+    public static void ValidateInstance<T>(this IServiceCollection services)
+    {
+        ArgumentGuard.NotNull<IServiceCollection>(services);
+
+        T? _instance;
+        using (var _serviceProvider = services.BuildServiceProvider())
+            _instance = _serviceProvider.GetService<T>();
+        ServiceNotFoundException.ThrowIfNull<T>(_instance);
+    }
+
     public static T? Instance<T>(this IServiceCollection services)
     {
+        ArgumentGuard.NotNull<IServiceCollection>(services);
+
         T? _instance;
         using (var _serviceProvider = services.BuildServiceProvider())
             _instance = _serviceProvider.GetService<T>();

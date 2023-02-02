@@ -1,5 +1,9 @@
+using ivp.edm;
+using ivp.edm.pubsub;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddExtensions(Enable.PUB_SUB);
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -15,17 +19,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-// Dapr will send serialized event object vs. being raw CloudEvent
-app.UseCloudEvents();
-
-// needed for Dapr pub/sub routing
-app.MapSubscribeHandler();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "subscriberRoute",
-    pattern: "ProcessMessage").WithTopic("rabbitmq-client2", "edmqueue");
+app.StartSubscriber();
 
 app.MapControllers();
 
