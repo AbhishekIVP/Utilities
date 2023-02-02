@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Entensions\MasterExtension\MasterExtension.csproj" />
+    <ProjectReference Include="..\..\..\Extensions\MasterExtension\MasterExtension.csproj" />
   </ItemGroup>
 
 </Project>

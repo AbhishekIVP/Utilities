@@ -11,6 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Entensions\OpenTelemetry\OpenTelemetry.Apm.csproj" />
+    <ProjectReference Include="..\..\Extensions\OpenTelemetry\OpenTelemetry.Apm.csproj" />
   </ItemGroup>
 </Project>

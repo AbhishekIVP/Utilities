@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenTelemetry\OpenTelemetry.Apm.csproj" />
-    <ProjectReference Include="..\DistributedLock\DistributedLock.csproj" />
     <ProjectReference Include="..\..\Commons\DistributedSecrets\DistributedSecrets.csproj" />
+    <ProjectReference Include="..\DistributedLock\DistributedLock.csproj" />
+    <ProjectReference Include="..\OpenTelemetry\OpenTelemetry.Apm.csproj" />
     <ProjectReference Include="..\Redis\RedisClient.csproj" />
   </ItemGroup>
 </Project>
