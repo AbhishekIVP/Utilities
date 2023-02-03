@@ -62,7 +62,10 @@
             "additionalProperties": false,
             "properties": {
                 "QueueName": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "MethodRoute": {
                     "type": "string"

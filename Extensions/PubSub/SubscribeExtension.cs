@@ -25,13 +25,30 @@ namespace ivp.edm.pubsub
 
             PubSubOptions _options = app.Services.GetRequiredService<IOptions<PubSubOptions>>().Value;
 
+            //TODO:Multiple Clients
+            List<string> _clients = new List<string>() { "client1", "client2", "client3" };
             //Adding Programmatic way
             configureTopicRouteMappings.Invoke(_options.TopicRouteMappings);
             foreach (TopicRouteMapping map in _options.TopicRouteMappings)
             {
-                app.MapControllerRoute(
-                    name: map.MethodRoute,
-                    pattern: map.MethodRoute).WithTopic(_options.Name, map.QueueName);
+                foreach (var queueName in map.QueueName)
+                {
+                    if (_options.IsMultiTenant)
+                    {
+                        foreach (string _client in _clients)
+                        {
+                            app.MapControllerRoute(
+                                name: map.MethodRoute,
+                                pattern: map.MethodRoute).WithTopic($"{_options.Name}-{_client}", queueName);
+                        }
+                    }
+                    else
+                    {
+                        app.MapControllerRoute(
+                                name: map.MethodRoute,
+                                pattern: map.MethodRoute).WithTopic($"{_options.Name}", queueName);
+                    }
+                }
             }
             return app;
         }

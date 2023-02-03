@@ -17,8 +17,10 @@ app.MapGet("/", async (DaprClient _daprClient, IOptions<PubSubOptions> _pubSubOp
         var order = new Order(i);
 
         // Publish an event/message using Dapr PubSub
-        await _daprClient.PublishEventAsync(_pubSubOptions.Value.Name, "edmqueue1", order);
-        await _daprClient.PublishEventAsync(_pubSubOptions.Value.Name, "edmqueue2", order);
+        await _daprClient.PublishEventAsync(_pubSubOptions.Value.PubSubName, "edmqueue1", order);
+        await _daprClient.PublishEventAsync(_pubSubOptions.Value.PubSubName, "edmqueue2", order);
+        await _daprClient.PublishEventAsync(_pubSubOptions.Value.PubSubName, "edmqueue3", order);
+
         Console.WriteLine("Published data: " + order);
 
         await Task.Delay(TimeSpan.FromSeconds(1));

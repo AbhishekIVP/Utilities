@@ -28,16 +28,16 @@ public static class PubSubEntensions
                 {
                     case QueueProvider.RABBITMQ:
                     case QueueProvider.REDIS:
-                        //read tenancy from Tenant Provider
-                        //GET THE DEFAULT PUB SUB PROVIDER 
-                        //ATTACH CLIENT ID IF MULTI TENANT
-                        _.Name = $"{_.Name}-client2";
+                        //TODO:ATTACH Current Request CLIENT ID IF MULTI TENANT from Tenancy Provider
+                        _.PubSubName = $"{_.Name}-client2";
                         break;
                     case QueueProvider.PULSAR:
                     default:
                         throw new NotImplementedException($"Multitenancy for {_.QueueProvider} is not implemented.");
                 }
             }
+            else
+                _.PubSubName = _.Name;
         });
         return services;
     }
@@ -45,7 +45,8 @@ public static class PubSubEntensions
 
 public class PubSubOptions
 {
-    public string Name { get; set; } = string.Empty;
+    internal string Name { get; set; } = string.Empty;
+    public string PubSubName { get; internal set; } = string.Empty;
     public QueueProvider QueueProvider { get; set; } = QueueProvider.RABBITMQ;
     public bool IsMultiTenant { get; set; } = false;
     public List<TopicRouteMapping> TopicRouteMappings { get; set; } = new List<TopicRouteMapping>();
@@ -60,6 +61,6 @@ public enum QueueProvider
 
 public class TopicRouteMapping
 {
-    public string QueueName { get; set; } = string.Empty;
+    public List<string> QueueName { get; set; } = new List<string>();
     public string MethodRoute { get; set; } = string.Empty;
 }
