@@ -25,8 +25,7 @@ Configure application's appsettings
 
 ~~~json
  "Dapr": {
-    "DefaultSecretStore": "local",
-    "SideCarPort": 63842
+    "DefaultSecretStore": "local"
   }
 ~~~
 
