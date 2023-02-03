@@ -29,6 +29,46 @@
             ],
             "title": "DistributedLocking"
         },
+        "PubSub": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "QueueProvider": {
+                    "type": "string",
+                    "enum": [
+                        "RabbitMQ",
+                        "Redis",
+                        "Pulsar"
+                    ]
+                },
+                "IsMultiTenant": {
+                    "type": "boolean"
+                },
+                "TopicRouteMappings": {
+                    "type": "array",
+                    "additionalProperties": false,
+                    "items": {
+                        "$ref": "#/definitions/TopicRouteMapping"
+                    }
+                }
+            },
+            "title": "PubSub"
+        },
+        "TopicRouteMapping": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "QueueName": {
+                    "type": "string"
+                },
+                "MethodRoute": {
+                    "type": "string"
+                }
+            }
+        },
         "Redis": {
             "type": "object",
             "additionalProperties": false,
@@ -281,6 +321,9 @@
         },
         "Redis": {
             "$ref": "#/definitions/Redis"
+        },
+        "PubSub": {
+            "$ref": "#/definitions/PubSub"
         }
     }
 }

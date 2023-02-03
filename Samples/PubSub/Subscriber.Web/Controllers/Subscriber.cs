@@ -15,5 +15,17 @@ namespace Samples.PubSub.Subscriber.Web.Controllers
             return Results.Ok(order);
         }
     }
+
+    [ApiController]
+    public class Subscriber2Controller : ControllerBase
+    {
+        [HttpPost]
+        [Route("ProcessMessage2")]
+        public IResult ProcessMessage2([FromBody] Order order)
+        {
+            Console.WriteLine("Subscriber2 received : " + order);
+            return Results.Ok(order);
+        }
+    }
     public record Order([property: JsonPropertyName("orderId")] int OrderId);
 }

@@ -26,8 +26,8 @@ namespace ivp.edm.pubsub
             PubSubOptions _options = app.Services.GetRequiredService<IOptions<PubSubOptions>>().Value;
 
             //Adding Programmatic way
-            configureTopicRouteMappings.Invoke(_options.TopicRouteMapping);
-            foreach (TopicRouteMapping map in _options.TopicRouteMapping)
+            configureTopicRouteMappings.Invoke(_options.TopicRouteMappings);
+            foreach (TopicRouteMapping map in _options.TopicRouteMappings)
             {
                 app.MapControllerRoute(
                     name: map.MethodRoute,

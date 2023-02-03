@@ -19,15 +19,24 @@ public static class PubSubEntensions
     {
         ServiceChainGuard.ValidateInstance<DaprClient>(services);
         //Adding Declarative way
-        //read from config, kubernetes or local
         services.AddOptions<PubSubOptions>().Bind(configuration.GetSection("PubSub")).Configure(_ =>
         {
+            if (string.IsNullOrEmpty(_.Name)) _.Name = $"{_.QueueProvider.ToString().ToLower()}";
             if (_.IsMultiTenant)
             {
-                //read config from configuration
-                //GET THE DEFAULT PUB SUB PROVIDER 
-                //ATTACH CLIENT ID IF MULTI TENANT
-                _.Name += "client2";
+                switch (_.QueueProvider)
+                {
+                    case QueueProvider.RABBITMQ:
+                    case QueueProvider.REDIS:
+                        //read tenancy from Tenant Provider
+                        //GET THE DEFAULT PUB SUB PROVIDER 
+                        //ATTACH CLIENT ID IF MULTI TENANT
+                        _.Name = $"{_.Name}-client2";
+                        break;
+                    case QueueProvider.PULSAR:
+                    default:
+                        throw new NotImplementedException($"Multitenancy for {_.QueueProvider} is not implemented.");
+                }
             }
         });
         return services;
@@ -39,7 +48,7 @@ public class PubSubOptions
     public string Name { get; set; } = string.Empty;
     public QueueProvider QueueProvider { get; set; } = QueueProvider.RABBITMQ;
     public bool IsMultiTenant { get; set; } = false;
-    public List<TopicRouteMapping> TopicRouteMapping { get; set; } = new List<TopicRouteMapping>();
+    public List<TopicRouteMapping> TopicRouteMappings { get; set; } = new List<TopicRouteMapping>();
 }
 
 public enum QueueProvider
