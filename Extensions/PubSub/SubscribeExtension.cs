@@ -25,7 +25,7 @@ namespace ivp.edm.pubsub
 
             PubSubOptions _options = app.Services.GetRequiredService<IOptions<PubSubOptions>>().Value;
 
-            //TODO:Multiple Clients
+            //TODO:Get All Clients from Tenant Provider
             List<string> _clients = new List<string>() { "client1", "client2", "client3" };
             //Adding Programmatic way
             configureTopicRouteMappings.Invoke(_options.TopicRouteMappings);
