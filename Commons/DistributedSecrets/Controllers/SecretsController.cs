@@ -20,7 +20,6 @@ public class SecretsController : ControllerBase
     [Route("/secret/{secretStoreName=local}/{secretName=default}")]
     public async Task<string> GetSecret(string secretStoreName, string secretName)
     {
-        // Get secret from a local secret store
         return await _secretManager.GetSecretAsync(secretStoreName, secretName);
     }
 
