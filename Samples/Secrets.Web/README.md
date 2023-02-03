@@ -7,11 +7,14 @@
 
 ## Usage
 
-Run 
+Run
+
 ~~~cmd
 dapr run --app-id secret-sidecar-app --log-as-json --enable-api-logging --log-level error
 ~~~
+
 OR
+
 ~~~cmd
 dapr run --app-id secret-sidecar-app --dapr-grpc-port 63842 --log-as-json --enable-api-logging --log-level error
 ~~~
