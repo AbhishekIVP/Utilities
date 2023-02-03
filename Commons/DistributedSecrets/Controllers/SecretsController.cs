@@ -7,12 +7,10 @@ namespace ivp.edm.secrets;
 [Route("[controller]")]
 public class SecretsController : ControllerBase
 {
-    private readonly ILogger<SecretsController> _logger;
     private readonly SecretsManager _secretManager;
 
-    public SecretsController(ILogger<SecretsController> logger, SecretsManager secretManager)
+    public SecretsController(SecretsManager secretManager)
     {
-        _logger = logger;
         _secretManager = secretManager;
     }
 
