@@ -17,5 +17,5 @@
   
 - [x] Notification -> Pub/Sub
   
-- [ ] Add Logging all possible methods
+- [x] Add Logging all possible methods
 - [ ] Add Multi tenancy
