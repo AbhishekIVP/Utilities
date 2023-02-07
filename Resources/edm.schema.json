@@ -306,6 +306,47 @@
                 }
             },
             "title": "SecretsService"
+        },
+        "Notification": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Server": {
+                    "type": "string"
+                },
+                "User": {
+                    "type": "string"
+                },
+                "Port": {
+                    "type": "integer"
+                },
+                "UseSsl": {
+                    "type": "boolean"
+                },
+                "RequiresAuthentication": {
+                    "type": "boolean"
+                },
+                "FromEmail": {
+                    "type": "string"
+                },
+                "Password": {
+                    "$ref": "#/definitions/Password"
+                },
+                "SocketOptions": {
+                    "type": "string",
+                    "enum": [
+                        "None",
+                        "Auto",
+                        "SslOnConnect",
+                        "StartTls",
+                        "StartTlsWhenAvailable"
+                    ]
+                },
+                "NotificationQueueName": {
+                    "type": "string"
+                }
+            },
+            "title": "Notification"
         }
     },
     "type": "object",
@@ -327,6 +368,9 @@
         },
         "PubSub": {
             "$ref": "#/definitions/PubSub"
+        },
+        "Notification": {
+            "$ref": "#/definitions/Notification"
         }
     }
 }
