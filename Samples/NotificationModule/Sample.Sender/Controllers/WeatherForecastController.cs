@@ -39,7 +39,7 @@ public class WeatherForecastController : ControllerBase
         _command.AudienceGroupName = "spanhotra";
         _command.Data = new CommandData()
         {
-            Header = "WeatherForecast",
+            Subject = "WeatherForecast",
             Body = JsonSerializer.Serialize(wf)
         };
         _command.Event = new EventStore() { Name = "ForecastReceived", Source = "Sample.Sender" };

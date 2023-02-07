@@ -38,7 +38,7 @@ public class CommandManager
 
 public record CommandData
 {
-    public string Header { get; set; } = string.Empty;
+    public string Subject { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
     public string Attachment { get; set; } = string.Empty; //attachment location
 }

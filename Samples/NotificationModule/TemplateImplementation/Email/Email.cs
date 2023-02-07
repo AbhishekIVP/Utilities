@@ -15,8 +15,7 @@ public class Email : ICustomNotify
 
     public async Task Notify(Command command, string templateName)
     {
-        // get Type from Template Name => initialize adapter => send data
-        var _response = await _fluentEmail.To("spanhotra@ivp.in").Body(command.Data?.Body).SendAsync();
+        var _response = await _fluentEmail.To("spanhotra@ivp.in").Subject(command.Data?.Subject).Body(command.Data?.Body).SendAsync();
         if (_response.Successful == false)
         {
             string _errorMessage = string.Join(",", _response.ErrorMessages);

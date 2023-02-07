@@ -23,7 +23,7 @@ public class CommandHandler
         //TODO:execute them one by one
         foreach (var template in command.TemplateNames)
         {
-            //get the implementation type from template
+            //TODO: get Type from Template Name => initialize adapter => send data
             TemplateStore _ = new TemplateStore() { Name = template };
             if (_.Type == TemplateType.EMAIL)
             {
