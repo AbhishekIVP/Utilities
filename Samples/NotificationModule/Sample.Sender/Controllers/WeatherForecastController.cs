@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using ivp.edm.notification;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +43,7 @@ public class WeatherForecastController : ControllerBase
             Body = JsonSerializer.Serialize(wf)
         };
         _command.Event = new EventStore() { Name = "ForecastReceived", Source = "Sample.Sender" };
-        _command.Template = new TemplateStore() { Name = "Standard Email", Type = TemplateType.EMAIL };
+        _command.TemplateNames = new List<string>() { "Standard Email" };
         _command.IsCritical = true;
 
         await _commandManager.Execute(_command);

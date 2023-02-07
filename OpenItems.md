@@ -19,3 +19,4 @@
   
 - [x] Add Logging all possible methods
 - [ ] Add Multi tenancy
+- [ ] Add Database connectivity to locking mechanism [Should be optional]

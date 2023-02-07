@@ -47,7 +47,7 @@ public class Command
 {
     public Guid EventInstanceID { get; set; } = new Guid();
     public EventStore @Event { get; set; } = new EventStore();
-    public TemplateStore Template { get; set; } = new TemplateStore();
+    public List<string> TemplateNames { get; set; } = new List<string>();
     public CommandData? Data { get; set; }
     public string AudienceGroupName { get; set; } = string.Empty;
     public DateTime EventTime { get; set; }

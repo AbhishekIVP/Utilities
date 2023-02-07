@@ -311,6 +311,19 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "Email": {
+                    "$ref": "#/definitions/Email"
+                },
+                "NotificationQueueName": {
+                    "type": "string"
+                }
+            },
+            "title": "Notification"
+        },
+        "Email": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
                 "Server": {
                     "type": "string"
                 },
@@ -341,12 +354,8 @@
                         "StartTls",
                         "StartTlsWhenAvailable"
                     ]
-                },
-                "NotificationQueueName": {
-                    "type": "string"
                 }
-            },
-            "title": "Notification"
+            }
         }
     },
     "type": "object",

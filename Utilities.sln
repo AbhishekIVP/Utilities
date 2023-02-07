@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Handler", "Samples\N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Event.Store", "Samples\NotificationModule\Event.Store\Event.Store.csproj", "{C49600AE-1E5F-485F-B0EA-68052C56ED83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateImplementation", "Samples\NotificationModule\TemplateImplementation\TemplateImplementation.csproj", "{4BA7E5B0-2A63-4E03-B89F-B9E5D161419D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,6 +140,10 @@ Global
 		{C49600AE-1E5F-485F-B0EA-68052C56ED83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C49600AE-1E5F-485F-B0EA-68052C56ED83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C49600AE-1E5F-485F-B0EA-68052C56ED83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BA7E5B0-2A63-4E03-B89F-B9E5D161419D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BA7E5B0-2A63-4E03-B89F-B9E5D161419D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BA7E5B0-2A63-4E03-B89F-B9E5D161419D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BA7E5B0-2A63-4E03-B89F-B9E5D161419D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E6180AEE-C9DD-439D-A8E5-606B48FF561D} = {2E00F457-821C-494D-8219-C2444FB088F8}
@@ -162,5 +168,6 @@ Global
 		{C4FF25CD-5B5F-422C-960C-ED869B13293C} = {6C9E1ECC-E08A-4463-9A91-CC79DFAB95EF}
 		{B5EE1F84-B3BE-4DD1-BDBA-EABC4CE0DFE2} = {6C9E1ECC-E08A-4463-9A91-CC79DFAB95EF}
 		{C49600AE-1E5F-485F-B0EA-68052C56ED83} = {6C9E1ECC-E08A-4463-9A91-CC79DFAB95EF}
+		{4BA7E5B0-2A63-4E03-B89F-B9E5D161419D} = {6C9E1ECC-E08A-4463-9A91-CC79DFAB95EF}
 	EndGlobalSection
 EndGlobal
