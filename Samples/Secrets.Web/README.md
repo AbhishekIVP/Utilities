@@ -24,15 +24,17 @@ Configure application's appsettings
 > Development
 
 ~~~json
- "Dapr": {
-    "DefaultSecretStore": "local"
+ "Application": {
+    "DefaultSecretStore": "local",
+    "IsMultiTenant": true
   }
 ~~~
 
 > Production
 
 ~~~json
- "Dapr": {
-    "DefaultSecretStore": "aws"
+ "Application": {
+    "DefaultSecretStore": "aws",
+    "IsMultiTenant": true
   }
 ~~~

@@ -1,14 +1,17 @@
 {
     "definitions": {
-        "Dapr": {
+        "Application": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
                 "DefaultSecretStore": {
                     "type": "string"
+                },
+                "IsMultiTenant": {
+                    "type": "boolean"
                 }
             },
-            "title": "Dapr"
+            "title": "Application"
         },
         "DistributedLocking": {
             "type": "object",
@@ -43,9 +46,6 @@
                         "Redis",
                         "Pulsar"
                     ]
-                },
-                "IsMultiTenant": {
-                    "type": "boolean"
                 },
                 "TopicRouteMappings": {
                     "type": "array",
@@ -316,8 +316,8 @@
         "SecretsService": {
             "$ref": "#/definitions/SecretsService"
         },
-        "Dapr": {
-            "$ref": "#/definitions/Dapr"
+        "Application": {
+            "$ref": "#/definitions/Application"
         },
         "OpenTelemetry": {
             "$ref": "#/definitions/OpenTelemetry"

@@ -3,8 +3,9 @@
 ## Add to the appSettings
 
 ~~~config
-"Dapr": {
-    "DefaultSecretStore": "local"
+"Application": {
+    "DefaultSecretStore": "local",
+    "IsMultiTenant": true
 }
 ~~~
 

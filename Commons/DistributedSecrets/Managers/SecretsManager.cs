@@ -20,7 +20,7 @@ public class SecretsManager
 
     public async Task<string> GetDefaultStoreSecretAsync(string secretName)
     {
-        string defaultStore = _configuration["Dapr:DefaultSecretStore"] ?? "local";
+        string defaultStore = _configuration["Application:DefaultSecretStore"] ?? "local";
 
         _logger.LogInformation($"MethodName GetDefaultStoreSecretAsync / SecretStoreName {defaultStore}");
         _logger.LogDebug($"secretName {secretName}");
@@ -60,9 +60,25 @@ public class SecretsManager
         ArgumentGuard.NotNullOrWhiteSpace(secretStoreName);
         ArgumentGuard.NotNullOrWhiteSpace(secretName);
 
+        secretStoreName = GetMultiTenantSecretStoreName(secretStoreName);
+
         _logger.LogInformation($"MethodName GetDaprSecretAsync / SecretStoreName {secretStoreName}");
         _logger.LogDebug($"secretName {secretName}");
 
         return await _daprClient.GetSecretAsync(secretStoreName, secretName);
+    }
+
+    private string GetMultiTenantSecretStoreName(string secretStoreName)
+    {
+        bool _isMultiTenant = Convert.ToBoolean(_configuration["Application:IsMultiTenant"]);
+        if (_isMultiTenant)
+        {
+            string clientName = "client2";
+            _logger.LogDebug($"Client Name {clientName}");
+            //TODO:ATTACH Current Request CLIENT ID IF MULTI TENANT from Tenancy Provider and build pubsub name
+            return $"{secretStoreName}-{clientName}";
+        }
+        else
+            return secretStoreName;
     }
 }

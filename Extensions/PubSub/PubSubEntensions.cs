@@ -22,6 +22,7 @@ public static class PubSubEntensions
         services.AddOptions<PubSubOptions>().Bind(configuration.GetSection("PubSub")).Configure(_ =>
         {
             if (string.IsNullOrEmpty(_.Name)) _.Name = $"{_.QueueProvider.ToString().ToLower()}";
+            _.IsMultiTenant = Convert.ToBoolean(configuration["Application:IsMultiTenant"]);
             if (_.IsMultiTenant)
             {
                 switch (_.QueueProvider)
@@ -42,9 +43,9 @@ public static class PubSubEntensions
 
 public class PubSubOptions
 {
-    internal string Name { get; set; } = string.Empty;
+    internal bool IsMultiTenant { get; set; } = false;
+    public string Name { get; set; } = string.Empty;
     public QueueProvider QueueProvider { get; set; } = QueueProvider.RABBITMQ;
-    public bool IsMultiTenant { get; set; } = false;
     public List<TopicRouteMapping> TopicRouteMappings { get; set; } = new List<TopicRouteMapping>();
 }
 
