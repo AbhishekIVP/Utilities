@@ -24,7 +24,7 @@ public static class SlackNotificationExtension
 
         ArgumentGuard.NotNull(token);
 
-        services.AddTransient<SlackClient>();
+        services.AddTransient<SlackClient>(_ => client);
         services.AddTransient<SlackPost>();
         return services;
     }

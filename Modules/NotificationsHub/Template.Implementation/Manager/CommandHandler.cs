@@ -27,6 +27,10 @@ public class CommandHandler
         foreach (var template in command.TemplateNames)
         {
             //TODO: get Type from Template Name => initialize adapter => send data
+
+            //TODO: If one service fails, it should still try for others
+            //TODO: In case of retries, it should skip successfully sent targets
+
             TemplateStore _ = new TemplateStore() { Name = template };
             switch (_.Type)
             {
