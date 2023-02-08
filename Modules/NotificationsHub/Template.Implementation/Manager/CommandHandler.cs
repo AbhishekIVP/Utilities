@@ -1,4 +1,5 @@
 using ivp.edm.notification;
+using ivp.edm.notification.template;
 using ivp.edm.notification.template.implementation;
 using ivp.edm.validations;
 using Microsoft.Extensions.Configuration;
@@ -19,18 +20,27 @@ public class CommandHandler
 
     public async Task Execute(Command command, string[] userids)
     {
-        //TODO:get the Implementation from command.TemplateNames
-        //TODO:execute them one by one
+        ICustomNotify? _client = null;
+        Type _type = typeof(ICustomNotify);
+
+        //TODO:get the Implementation from command.TemplateNames, execute them one by one
         foreach (var template in command.TemplateNames)
         {
             //TODO: get Type from Template Name => initialize adapter => send data
             TemplateStore _ = new TemplateStore() { Name = template };
-            if (_.Type == TemplateType.EMAIL)
+            switch (_.Type)
             {
-                var _emailClient = _serviceProvider.GetService<Email>();
-                ServiceNotFoundException.ThrowIfNull<Email>(_emailClient);
-                await _emailClient.Notify(command, template);
+                case TemplateType.EMAIL:
+                    _client = _serviceProvider.GetService<Email>();
+                    _type = typeof(Email);
+                    break;
+                case TemplateType.SLACK:
+                    _client = _serviceProvider.GetService<SlackPost>();
+                    _type = typeof(SlackPost);
+                    break;
             }
+            ServiceNotFoundException.ThrowIfNull(_client, _type);
+            await _client.Notify(command, template);
         }
     }
 }

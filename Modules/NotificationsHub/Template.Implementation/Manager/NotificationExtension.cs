@@ -15,6 +15,9 @@ public static class NotificationExtension
                 case "email":
                     EmailNotificationExtension.AddEmailNotification(services, configuration);
                     break;
+                case "slack":
+                    SlackNotificationExtension.AddSlackNotification(services, configuration);
+                    break;
             }
         }
         services.AddTransient<CommandHandler>();

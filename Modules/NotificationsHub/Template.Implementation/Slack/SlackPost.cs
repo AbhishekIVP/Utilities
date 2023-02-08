@@ -1,5 +1,3 @@
-using ivp.edm.secrets;
-using ivp.edm.validations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SlackAPI;
@@ -10,25 +8,15 @@ public class SlackPost : ICustomNotify
 {
     private readonly ILogger<SlackPost> _logger;
     private readonly IConfiguration _configuration;
-    private readonly SecretsManager _secretsManager;
-    public SlackPost(ILogger<SlackPost> logger, IConfiguration configuration, SecretsManager secretsManager)
+    private readonly SlackClient _slackClient;
+    public SlackPost(ILogger<SlackPost> logger, IConfiguration configuration, SlackClient client)
     {
         _logger = logger;
         _configuration = configuration;
-        _secretsManager = secretsManager;
+        _slackClient = client;
     }
     public async Task Notify(Command command, string templateName)
     {
-        string? token = null;
-        var _slackOptions = new SlackOptions();
-        _configuration.GetSection("Notification:Slack").Bind(_slackOptions);
-
-        if (string.IsNullOrEmpty(_slackOptions.Token.ValueFrom) == false)
-            token = _secretsManager.GetDefaultStoreSecretAsync(_slackOptions.Token.ValueFrom).Result;
-        else if (string.IsNullOrEmpty(_slackOptions.Token.Value) == false)
-            token = _slackOptions.Token.Value;
-
-        ArgumentGuard.NotNull(token);
         if (command.Data == null)
         {
             _logger.LogWarning("Command Data is null, not proceeding to send out a Slack!!!");
@@ -52,13 +40,12 @@ public class SlackPost : ICustomNotify
 
         await Task.Run(() =>
         {
-            SlackClient client = new SlackClient(token);
             ManualResetEventSlim manualResetEventSlimChannel = new ManualResetEventSlim(false);
             ManualResetEventSlim manualResetEventSlimDM = new ManualResetEventSlim(false);
 
             if (string.IsNullOrEmpty(channel) == false)
             {
-                client.GetChannelList((_) =>
+                _slackClient.GetChannelList((_) =>
                 {
                     if (_.ok)
                     {
@@ -72,7 +59,7 @@ public class SlackPost : ICustomNotify
                         }
                         else
                         {
-                            client.PostMessage(_m =>
+                            _slackClient.PostMessage(_m =>
                             {
                                 if (_m.ok)
                                     _logger.LogInformation("message sent");
@@ -83,7 +70,7 @@ public class SlackPost : ICustomNotify
                                 {
                                     try
                                     {
-                                        client.UploadFile(_mp =>
+                                        _slackClient.UploadFile(_mp =>
                                         {
                                             if (_mp.ok)
                                                 _logger.LogInformation("message sent");
@@ -116,7 +103,7 @@ public class SlackPost : ICustomNotify
 
             if (string.IsNullOrEmpty(toUserName) == false)
             {
-                client.GetUserList(_ =>
+                _slackClient.GetUserList(_ =>
                 {
                     if (_.ok)
                     {
@@ -129,7 +116,7 @@ public class SlackPost : ICustomNotify
                         }
                         else
                         {
-                            client.GetDirectMessageList(_dm =>
+                            _slackClient.GetDirectMessageList(_dm =>
                             {
                                 if (_dm.ok)
                                 {
@@ -148,7 +135,7 @@ public class SlackPost : ICustomNotify
                                         }
                                         else
                                         {
-                                            client.PostMessage(_m =>
+                                            _slackClient.PostMessage(_m =>
                                             {
                                                 if (_m.ok)
                                                     _logger.LogDebug("message sent successfully");
@@ -189,10 +176,5 @@ public class SlackPost : ICustomNotify
         }
 
         _logger.LogDebug("End");
-    }
-
-    internal class SlackOptions
-    {
-        public PasswordOptions Token { get; set; } = new PasswordOptions();
     }
 }

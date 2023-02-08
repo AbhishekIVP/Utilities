@@ -46,4 +46,9 @@ public class ServiceNotFoundException
         if (argument == null)
             throw new ArgumentNullException($"{typeof(T).Name} is not added to the service collection.");
     }
+    public static void ThrowIfNull([NotNull] object? argument, Type type)
+    {
+        if (argument == null)
+            throw new ArgumentNullException($"{type.Name} is not added to the service collection.");
+    }
 }
