@@ -21,6 +21,7 @@ public static class DistributedLockingExtensions
     public static IServiceCollection AddDynamicLocking(this IServiceCollection services
                 , IConfiguration configuration)
     {
+        //TODO: Get Redis Database from Tenant Service
 
         LockingOptions _lockingOptions = new LockingOptions();
         configuration.GetSection("DistributedLocking").Bind(_lockingOptions);

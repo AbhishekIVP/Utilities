@@ -9,4 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Dapr.AspNetCore" Version="1.8.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Extensions\MasterExtension\MasterExtension.csproj" />
+    <ProjectReference Include="..\..\..\Extensions\PubSub\PubSub.csproj" />
+  </ItemGroup>
 </Project>

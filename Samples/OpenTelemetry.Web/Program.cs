@@ -6,9 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.AddMonitoring();
 builder.Host.AddLogging();
 
-//TODO: This does not look right, to pass Configuration and Environment like this
-//builder.Services.AddAPM(builder.Configuration, builder.Environment);
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

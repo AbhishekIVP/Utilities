@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Entensions\OpenTelemetry\OpenTelemetry.Apm.csproj" />
+    <ProjectReference Include="..\..\Extensions\OpenTelemetry\OpenTelemetry.Apm.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

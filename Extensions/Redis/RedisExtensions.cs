@@ -18,6 +18,8 @@ public static class RedisExtensions
 
     public static IServiceCollection AddRedisClient(this IServiceCollection services, IConfiguration configuration)
     {
+        //TODO: Get redis config from Config Service
+
         RedisOptions _redisOptions = new RedisOptions();
         configuration.GetSection("Redis").Bind(_redisOptions);
 

@@ -1,10 +1,11 @@
-using Dapr.Client;
+using ivp.edm;
 using ivp.edm.apm;
-using ivp.edm.distributedlock;
-using ivp.edm.redis;
-using ivp.edm.secrets;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddExtensions();
+// builder.AddExtensions(Enable.DAPR | Enable.APM);
+// builder.AddExtensions(Enable.APM | Enable.DAPR | Enable.LOCKING | Enable.REDIS | Enable.SECRETS | Enable.LOG);
 
 // Add services to the container.
 
@@ -12,14 +13,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddSingleton<DaprClient>(new DaprClientBuilder().Build());
-builder.Services.AddScoped<SecretsManager>();
-
-builder.Host.AddRedisClient();
-builder.Host.AddDynamicLocking();
-builder.Host.AddMonitoring();
-builder.Host.AddLogging();
 
 var app = builder.Build();
 

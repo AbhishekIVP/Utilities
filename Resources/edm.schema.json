@@ -1,14 +1,17 @@
 {
     "definitions": {
-        "Dapr": {
+        "Application": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
                 "DefaultSecretStore": {
                     "type": "string"
+                },
+                "IsMultiTenant": {
+                    "type": "boolean"
                 }
             },
-            "title": "Dapr"
+            "title": "Application"
         },
         "DistributedLocking": {
             "type": "object",
@@ -28,6 +31,46 @@
                 "Type"
             ],
             "title": "DistributedLocking"
+        },
+        "PubSub": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "QueueProvider": {
+                    "type": "string",
+                    "enum": [
+                        "RabbitMQ",
+                        "Redis",
+                        "Pulsar"
+                    ]
+                },
+                "TopicRouteMappings": {
+                    "type": "array",
+                    "additionalProperties": false,
+                    "items": {
+                        "$ref": "#/definitions/TopicRouteMapping"
+                    }
+                }
+            },
+            "title": "PubSub"
+        },
+        "TopicRouteMapping": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "QueueName": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "MethodRoute": {
+                    "type": "string"
+                }
+            }
         },
         "Redis": {
             "type": "object",
@@ -263,6 +306,68 @@
                 }
             },
             "title": "SecretsService"
+        },
+        "Notification": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Email": {
+                    "$ref": "#/definitions/Email"
+                },
+                "Slack": {
+                    "$ref": "#/definitions/Slack"
+                },
+                "NotificationQueueName": {
+                    "type": "string"
+                }
+            },
+            "title": "Notification"
+        },
+        "Email": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Server": {
+                    "type": "string"
+                },
+                "User": {
+                    "type": "string"
+                },
+                "Port": {
+                    "type": "integer"
+                },
+                "UseSsl": {
+                    "type": "boolean"
+                },
+                "RequiresAuthentication": {
+                    "type": "boolean"
+                },
+                "FromEmail": {
+                    "type": "string"
+                },
+                "Password": {
+                    "$ref": "#/definitions/Password"
+                },
+                "SocketOptions": {
+                    "type": "string",
+                    "enum": [
+                        "None",
+                        "Auto",
+                        "SslOnConnect",
+                        "StartTls",
+                        "StartTlsWhenAvailable"
+                    ]
+                }
+            }
+        },
+        "Slack": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Token": {
+                    "$ref": "#/definitions/Password"
+                }
+            }
         }
     },
     "type": "object",
@@ -273,14 +378,20 @@
         "SecretsService": {
             "$ref": "#/definitions/SecretsService"
         },
-        "Dapr": {
-            "$ref": "#/definitions/Dapr"
+        "Application": {
+            "$ref": "#/definitions/Application"
         },
         "OpenTelemetry": {
             "$ref": "#/definitions/OpenTelemetry"
         },
         "Redis": {
             "$ref": "#/definitions/Redis"
+        },
+        "PubSub": {
+            "$ref": "#/definitions/PubSub"
+        },
+        "Notification": {
+            "$ref": "#/definitions/Notification"
         }
     }
 }

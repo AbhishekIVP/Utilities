@@ -1,7 +1,9 @@
+using ivp.edm;
 using ivp.edm.apm;
-using ivp.edm.secrets;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddExtensions(Enable.APM | Enable.LOG | Enable.DAPR | Enable.SECRETS);
 
 // Add services to the container.
 
@@ -9,12 +11,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddDaprClient();
-builder.Services.AddScoped<SecretsManager>();
-
-builder.Host.AddMonitoring();
-builder.Host.AddLogging();
 
 var app = builder.Build();
 
