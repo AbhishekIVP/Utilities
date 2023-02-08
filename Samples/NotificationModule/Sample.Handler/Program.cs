@@ -25,7 +25,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
-app.StartSubscriber();
+app.StartSubscriber(_ =>
+{
+    if (_.Exists(__ => __.MethodRoute == "ProcessCommand") == false)
+        _.Add(new TopicRouteMapping() { MethodRoute = "ProcessCommand", QueueName = new List<string>() { "notificationqueue" } });
+});
 
 app.MapControllers();
 
