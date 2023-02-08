@@ -18,7 +18,7 @@
 - [x] Notification -> Pub/Sub
   
 - [x] Add Logging all possible methods
-- [ ] Add Multi tenancy
+- [ ] Add Multi tenancy, check TODO
 - [ ] Add Database connectivity to locking mechanism [Should be optional]
 - [ ] On failure of Notification Service, messages should be re-picked from the queue and processed, but it should have a timeout, after which the message should be dropped.
 - [ ] attachment to the notification
