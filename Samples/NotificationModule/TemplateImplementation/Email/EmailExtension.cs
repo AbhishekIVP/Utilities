@@ -33,9 +33,3 @@ public class EmailNotificationOptions : SmtpClientOptions
     public new PasswordOptions Password { get; set; } = new PasswordOptions();
     public string FromEmail { get; set; } = "notifications@ivp.in";
 }
-
-public class PasswordOptions
-{
-    public string Value { get; set; } = string.Empty;
-    public string ValueFrom { get; set; } = string.Empty;
-}

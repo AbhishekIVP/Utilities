@@ -314,6 +314,9 @@
                 "Email": {
                     "$ref": "#/definitions/Email"
                 },
+                "Slack": {
+                    "$ref": "#/definitions/Slack"
+                },
                 "NotificationQueueName": {
                     "type": "string"
                 }
@@ -354,6 +357,15 @@
                         "StartTls",
                         "StartTlsWhenAvailable"
                     ]
+                }
+            }
+        },
+        "Slack": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Token": {
+                    "$ref": "#/definitions/Password"
                 }
             }
         }

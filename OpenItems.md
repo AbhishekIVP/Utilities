@@ -20,3 +20,8 @@
 - [x] Add Logging all possible methods
 - [ ] Add Multi tenancy
 - [ ] Add Database connectivity to locking mechanism [Should be optional]
+- [ ] On failure of Notification Service, messages should be re-picked from the queue and processed, but it should have a timeout, after which the message should be dropped.
+- [ ] attachment to the notification
+- [ ] Send Notification to Browser using SignalR
+- [ ] Add interfaces instead of classes in DI
+- [x] Add Slack Integration

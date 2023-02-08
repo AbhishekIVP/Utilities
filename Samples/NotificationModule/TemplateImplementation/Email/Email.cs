@@ -15,6 +15,7 @@ public class Email : ICustomNotify
 
     public async Task Notify(Command command, string templateName)
     {
+        //TODO: get user information from command.AudienceGroupName
         var _response = await _fluentEmail.To("spanhotra@ivp.in").Subject(command.Data?.Subject).Body(command.Data?.Body).SendAsync();
         if (_response.Successful == false)
         {
