@@ -12,9 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Extensions\MasterExtension\MasterExtension.csproj" />
-    <ProjectReference Include="..\Event.Store\Event.Store.csproj" />
     <ProjectReference Include="..\..\..\Commons\Validations\Validations.csproj" />
-    <ProjectReference Include="..\TemplateImplementation\TemplateImplementation.csproj" />
+    <ProjectReference Include="..\..\..\Modules\NotificationsHub\Event.Store\Event.Store.csproj" />
+    <ProjectReference Include="..\..\..\Modules\NotificationsHub\Template.Implementation\Template.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

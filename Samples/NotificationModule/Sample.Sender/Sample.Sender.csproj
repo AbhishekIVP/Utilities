@@ -11,6 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Extensions\MasterExtension\MasterExtension.csproj" />
-    <ProjectReference Include="..\Event.Store\Event.Store.csproj" />
+    <ProjectReference Include="..\..\..\Modules\NotificationsHub\Event.Store\Event.Store.csproj" />
   </ItemGroup>
 </Project>
